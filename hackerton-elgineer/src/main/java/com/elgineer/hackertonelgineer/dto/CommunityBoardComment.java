@@ -22,7 +22,7 @@ public class CommunityBoardComment {
     public CommunityBoardComment() {
     }
 
-    public CommunityBoardComment(Long id, String content, CommunityBoardPost communityBoardPost, LocalDateTime createdAt) {
+    public CommunityBoardComment(Long id, String content, com.elgineer.hackertonelgineer.dto.CommunityBoardPost communityBoardPost, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
         this.communityBoardPost = communityBoardPost;
@@ -70,5 +70,4 @@ public class CommunityBoardComment {
                 ", createdAt=" + createdAt +
                 '}';
     }
-
 }

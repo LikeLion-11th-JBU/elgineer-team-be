@@ -33,8 +33,9 @@ public class CommunityBoardPost {
     // Fetch..=> 지연 로딩을 의미, 실제로 데이터가 필요한 시점에 DB에서 가져옴
     @JoinColumn(name = "category_id")
     // foreign key 를 지정할 때 사용되고, 이 foreign key의 이름을 category_id 로 지정함
+    // 게시글이 어느 카테고리에 속하는지 표시하는데 사용됨.
     private Category category;
-    //
+
 
     @Column(nullable = false, updatable = false)
     // createAt은 값을 비울 수 없고, 값을 수정할 수 없음.
