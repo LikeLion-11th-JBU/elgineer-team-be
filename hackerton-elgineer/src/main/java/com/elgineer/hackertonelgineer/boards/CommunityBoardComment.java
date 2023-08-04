@@ -1,4 +1,6 @@
-package com.elgineer.hackertonelgineer.dto;
+package com.elgineer.hackertonelgineer.boards;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,18 +16,18 @@ public class CommunityBoardComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private CommunityBoardPost communityBoardPost;
+    private CommunityPost communityPost;
+    // 게시글 하나에 다수의 댓글 생성가능
 
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public CommunityBoardComment() {
-    }
 
-    public CommunityBoardComment(Long id, String content, com.elgineer.hackertonelgineer.dto.CommunityBoardPost communityBoardPost, LocalDateTime createdAt) {
+    public CommunityBoardComment(Long id, String content, CommunityPost communityPost, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
-        this.communityBoardPost = communityBoardPost;
+        this.communityPost = communityPost;
         this.createdAt = createdAt;
     }
 
@@ -45,12 +47,12 @@ public class CommunityBoardComment {
         this.content = content;
     }
 
-    public CommunityBoardPost getCommunityBoardPost() {
-        return communityBoardPost;
+    public CommunityPost getCommunityPost() {
+        return communityPost;
     }
 
-    public void setCommunityBoardPost(CommunityBoardPost communityBoardPost) {
-        this.communityBoardPost = communityBoardPost;
+    public void setCommunityPost(CommunityPost communityPost) {
+        this.communityPost = communityPost;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -66,7 +68,7 @@ public class CommunityBoardComment {
         return "CommunityBoardComment{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
-                ", communityBoardPost=" + communityBoardPost +
+                ", communityPost=" + communityPost +
                 ", createdAt=" + createdAt +
                 '}';
     }
