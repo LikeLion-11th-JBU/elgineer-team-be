@@ -31,7 +31,7 @@ public class CommunityBoardService implements CommunityBoardLogic {
     @Override
     public void createFixedCommunityBoard() {
         List<CommunityBoard> fixedBoards = new ArrayList<>();
-        
+
         fixedBoards.add(new CommunityBoard("건강 복지 게시판"));
         fixedBoards.add(new CommunityBoard("생활 복지 게시판"));
         fixedBoards.add(new CommunityBoard("교육 복지 게시판"));
