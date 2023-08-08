@@ -23,6 +23,9 @@ public class CommunityBoardComment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public void communityPostRepository(CommunityPost post) {
+    }
+
 
     public CommunityBoardComment(Long id, String content, CommunityPost communityPost, LocalDateTime createdAt) {
         this.id = id;
@@ -72,4 +75,6 @@ public class CommunityBoardComment {
                 ", createdAt=" + createdAt +
                 '}';
     }
+
+
 }

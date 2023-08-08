@@ -1,6 +1,7 @@
 package com.elgineer.hackertonelgineer.boards;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,6 +14,9 @@ public class CommunityBoard {
     @Column(nullable = false)
     private String name; // 게시판 이름
 
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<CommunityPost> posts = new ArrayList<>();
+
     public CommunityBoard(String name) {
         this.name = name;
     }
@@ -20,9 +24,10 @@ public class CommunityBoard {
     public CommunityBoard() {
     }
 
-    public CommunityBoard(Long id, String name) {
+    public CommunityBoard(Long id, String name, List<CommunityPost> posts) {
         this.id = id;
         this.name = name;
+        this.posts = posts;
     }
 
     public Long getId() {
@@ -41,11 +46,20 @@ public class CommunityBoard {
         this.name = name;
     }
 
+    public List<CommunityPost> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<CommunityPost> posts) {
+        this.posts = posts;
+    }
+
     @Override
     public String toString() {
         return "CommunityBoard{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", posts=" + posts +
                 '}';
     }
 }
