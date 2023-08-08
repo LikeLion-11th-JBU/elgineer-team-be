@@ -15,10 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LifeCategoryController {
 
 
-    @GetMapping("/lifecategory")
-    public String lifemain() {
-        return "lifecategory.html"; // lifecategory.html을 템플릿으로 사용합니다.
-    }
 
 
     @GetMapping("/lifecategory/together")
