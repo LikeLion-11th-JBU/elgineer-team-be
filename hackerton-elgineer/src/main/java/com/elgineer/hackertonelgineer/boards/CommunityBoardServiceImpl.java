@@ -3,57 +3,69 @@ package com.elgineer.hackertonelgineer.boards;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
 public class CommunityBoardServiceImpl implements CommunityBoardService{
 
     private final CommunityBoardRepository communityBoardRepository;
-
-    @Override
-    public void createFixedCommunityBoard() {
-        List<CommunityBoard> fixedBoards = new ArrayList<>();
-        
-        fixedBoards.add(new CommunityBoard("건강 복지 게시판"));
-        fixedBoards.add(new CommunityBoard("생활 복지 게시판"));
-        fixedBoards.add(new CommunityBoard("교육 복지 게시판"));
-        fixedBoards.add(new CommunityBoard("자유 게시판"));
-
-        communityBoardRepository.saveAll(fixedBoards);
-    }
+    private final CommunityPostRepository communityPostRepository;
 
     @Autowired
-    public CommunityBoardServiceImpl(CommunityBoardRepository communityBoardRepository){
+    public CommunityBoardServiceImpl(CommunityBoardRepository communityBoardRepository, CommunityPostRepository communityPostRepository) {
         this.communityBoardRepository = communityBoardRepository;
+        this.communityPostRepository = communityPostRepository;
     }
 
-    // 모든 게시판을 가져오는 메서드. (전체 게시판 조회)
-    //
+    @PostConstruct
+    public void initialize() {
+        if (communityBoardRepository.findByName("자유게시판") == null) {
+            CommunityBoard mainBoard = new CommunityBoard();
+            mainBoard.setName("자유게시판");
+            communityBoardRepository.save(mainBoard);
+        }
+    }
+
     @Override
     public List<CommunityBoard> getAllCommunityBoards() {
         return communityBoardRepository.findAll();
     }
 
-    // boardId 로 게시판 조회하고, 게시판이 없으면 null 반환
-    // 
     @Override
     public CommunityBoard getCommunityBoardById(Long boardId) {
         return communityBoardRepository.findById(boardId).orElse(null);
     }
 
-    // 새로운 커뮤니티 게시판을 생성하는 메서드. (나중에 수정)
-    // 
     @Override
     public CommunityBoard createCommunityBoard(String name) {
-        CommunityBoard newBoard = new CommunityBoard(name);
-        return communityBoardRepository.save(newBoard);
+        return null;
     }
 
-    // boardId 로 게시판을 삭제하는 메서드. (생성, 삭제기능 나중에 다시 수정할 것)
-    //
+    @Override
+    public CommunityBoard getCommunityBoardByName(String name) {
+        return communityBoardRepository.findByName(name);
+    }
+
     @Override
     public void deleteCommunityBoard(Long boardId) {
         communityBoardRepository.deleteById(boardId);
+    }
+
+    @Override
+    public List<CommunityPost> getAllPosts() {
+        return communityPostRepository.findAll();
+    }
+
+    @Override
+    public List<CommunityPost> getPostsByCategory(CommunityPost.Category category) {
+        // CommunityPostRepository에서 카테고리 별로 조회하는 기능
+        return communityPostRepository.findByCategory(category);
+    }
+
+    @Override
+    public List<CommunityPost> searchPostsByKeyword(String keyword) {
+        // CommunityPostRepository에서 키워드로 검색하는 기능
+        return communityPostRepository.searchByKeyword(keyword);
     }
 }

@@ -12,32 +12,35 @@ import java.util.List;
 public class CommunityPostServiceImpl implements CommunityPostService{
     private final CommunityBoardRepository communityBoardRepository;
     private final CommunityPostRepository communityPostRepository;
-    private final CommunityBoardCommentRepository communityBoardCommentRepository;
+    private final CommunityPostCommentRepository communityPostCommentRepository;
 
     @Autowired
     public CommunityPostServiceImpl(CommunityBoardRepository communityBoardRepository,
                                          CommunityPostRepository communityBoardPostRepository,
-                                         CommunityBoardCommentRepository communityBoardCommentRepository) {
+                                         CommunityPostCommentRepository communityPostCommentRepository) {
         this.communityBoardRepository = communityBoardRepository;
         this.communityPostRepository = communityBoardPostRepository;
-        this.communityBoardCommentRepository = communityBoardCommentRepository;
+        this.communityPostCommentRepository = communityPostCommentRepository;
     }
 
     // 작성 시간을 현재 시간으로 설정 후, 게시글 생성하고 저장함
     // 카테고리 설정 기능 추가
+
+
+
     @Override
-    public CommunityPost createPost(CommunityPost post, String categoryName) {
-        post.setCreatedAt(LocalDateTime.now());
-
-        CommunityBoard category = communityBoardRepository.findByName(categoryName);
-
-        if (category == null) {
-            // 만약 categoryId가 주어지지 않았을 경우 "자유" 카테고리로 설정
-            category = communityBoardRepository.findByName("자유");
+    public CommunityPost createPost(CommunityPost post, String boardName) {
+        CommunityBoard board = communityBoardRepository.findByName(boardName);
+        if (board == null) {
+            throw new IllegalArgumentException("Board not found with name: " + boardName);
         }
-        post.setCategory(category);
+
+        post.setBoard(board); // 게시글 객체에 카테고리 설정
         return communityPostRepository.save(post);
     }
+
+
+
 
     // 전체 게시글 조회 기능
     @Override
@@ -78,34 +81,35 @@ public class CommunityPostServiceImpl implements CommunityPostService{
     @Transactional
     // 트랜잭션 기능을 활성화하기 위해 사용되는 어노테이션.
     // 트랜잭션 : 여러 개의 작업을 하나의 논리적인 작업 단위로 묶어서 DB를 처리함
-    public CommunityBoardComment addComment(Long postId, CommunityBoardComment comment) {
+    public CommunityPostComment addComment(Long postId, CommunityPostComment comment) {
         CommunityPost post = communityPostRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Post not found : " + postId));
 
         comment.setCreatedAt(LocalDateTime.now());
-        comment.communityPostRepository(post);
+        comment.setCommunityPost(post);
 
-        return communityBoardCommentRepository.save(comment);
+        return communityPostCommentRepository.save(comment);
     }
 
     // 게시판에 달린 모든 댓글을 조회하여 리스트로 반환
     //
     @Override
-    public List<CommunityBoardComment> getCommentsForPost(Long postId) {
-        return communityBoardCommentRepository.findByCommunityPostId(postId);
+    public List<CommunityPostComment> getCommentsForPost(Long postId) {
+        return communityPostCommentRepository.findByCommunityPostId(postId);
     }
 
     // commentId 에 해당하는 댓글을 삭제
     //
     @Override
     public void deleteComment(Long commentId) {
-        CommunityBoardComment comment = communityBoardCommentRepository.findById(commentId)
+        CommunityPostComment comment = communityPostCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
-        communityBoardCommentRepository.delete(comment);
+        communityPostCommentRepository.delete(comment);
     }
 
     // 특정 커뮤니티 게시글에 좋아요 추가.
     // postId를 사용하여 해당 게시글 조회 후, 좋아요 카운트 증가하고 저장
+    // 게시글마다 사용자는 단 한 번씩만 좋아요가 가능하도록 하기! (해야할 것)
     @Override
     public CommunityPost addLike(Long postId) {
         CommunityPost post = communityPostRepository.findById(postId)

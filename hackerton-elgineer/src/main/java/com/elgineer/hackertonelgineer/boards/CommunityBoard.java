@@ -14,7 +14,8 @@ public class CommunityBoard {
     @Column(nullable = false)
     private String name; // 게시판 이름
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    // 여러 개의 게시글이 하나의 게시판에 속하도록
     private List<CommunityPost> posts = new ArrayList<>();
 
     public CommunityBoard(String name) {

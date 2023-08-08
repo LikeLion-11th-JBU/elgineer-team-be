@@ -2,17 +2,34 @@ package com.elgineer.hackertonelgineer.boards;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/posts")
 // 일단 '게시판' 생성, 삭제 기능은 넣지 않음 (수정이 필요해 보여서)
 public class CommunityBoardController {
     private final CommunityBoardService communityBoardService;
     private final CommunityPostService communityPostService;
+
+    private String mapCategoryName(String categoryName) {
+        if (categoryName == null || categoryName.isBlank() || categoryName.equals("자유")) {
+            return "자유 게시판";
+        }
+        switch (categoryName.toUpperCase()) {
+            case "HEALTH":
+                return "건강";
+            case "EDUCATION":
+                return "교육";
+            case "LIFE":
+                return "생활";
+            default:
+                return "자유 게시판"; // 기본값
+        }
+    }
 
     public CommunityBoardController(CommunityBoardService communityBoardService,
                                     CommunityPostService communityPostService) {
@@ -38,7 +55,10 @@ public class CommunityBoardController {
     @PostMapping
     public ResponseEntity<CommunityPost> createPost(@RequestBody CommunityPost post,
                                                     // 선택하지 않으면 자유게시판이 되므로 false로 따로 옵션을 줌
-                                                    @RequestParam(required = false) String categoryName) {
+                                                    @RequestParam(name = "categoryName",required = false) String categoryName) {
+
+        categoryName = mapCategoryName(categoryName);
+
         CommunityPost createdPost = communityPostService.createPost(post, categoryName);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
@@ -75,14 +95,14 @@ public class CommunityBoardController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<CommunityBoardComment> addComment(@PathVariable Long postId, @RequestBody CommunityBoardComment comment) {
-        CommunityBoardComment addedComment = communityPostService.addComment(postId, comment);
+    public ResponseEntity<CommunityPostComment> addComment(@PathVariable Long postId, @RequestBody CommunityPostComment comment) {
+        CommunityPostComment addedComment = communityPostService.addComment(postId, comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedComment);
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommunityBoardComment>> getCommentsForPost(@PathVariable Long postId) {
-        List<CommunityBoardComment> comments = communityPostService.getCommentsForPost(postId);
+    public ResponseEntity<List<CommunityPostComment>> getCommentsForPost(@PathVariable Long postId) {
+        List<CommunityPostComment> comments = communityPostService.getCommentsForPost(postId);
         return ResponseEntity.ok(comments);
     }
 
@@ -103,6 +123,5 @@ public class CommunityBoardController {
         CommunityPost post = communityPostService.removeLike(postId);
         return ResponseEntity.ok(post);
     }
-
 
 }

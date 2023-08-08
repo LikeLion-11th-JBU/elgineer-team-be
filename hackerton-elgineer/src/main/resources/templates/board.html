@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Board</title>
+</head>
+<body>
+<h1>Community Board</h1>
+
+<!-- 카테고리 목록 -->
+<div>
+    <h2>Categories</h2>
+    <ul>
+        <li th:each="category : ${categories}" th:text="${category.name}"></li>
+    </ul>
+</div>
+
+<!-- 게시글 작성 폼 -->
+<div>
+    <h2>Create a Post</h2>
+    <form action="/api/posts" method="post">
+        <div>
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div>
+            <label for="content">Content</label>
+            <textarea id="content" name="content" required></textarea>
+        </div>
+        <div>
+            <label for="categoryName">Category</label>
+            <select id="categoryName" name="categoryName">
+                <option value="HEALTH">건강</option>
+                <option value="EDUCATION">교육</option>
+                <option value="LIFE">생활</option>
+                <option value="자유">자유</option>
+            </select>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<!-- 게시글 목록 -->
+<div>
+    <h2>Posts</h2>
+    <ul>
+        <li th:each="post : ${posts}" th:text="${post.title}"></li>
+    </ul>
+</div>
+</body>
+</html>
