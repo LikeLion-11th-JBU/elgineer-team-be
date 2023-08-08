@@ -1,18 +1,22 @@
-<!DOCTYPE html>
-<html>
+<!Doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>카테고리 페이지</title>
+    <title>생활 관련 복지</title>
+    <meta http-equiv="Content-Type" content="text/html"; charset="utf-8" />
 </head>
+
 <body>
-<h1>카테고리 목록</h1>
-<ul>
-  <!-- 카테고리 정보를 순회하며 출력합니다. -->
-  <#list categories as category>
-  <li>{노인생활복지}</li>
-  <li>{취미활동}</li>
-  <li>{비상연락처}</li>
-  <li>{주요시설물위치}</li>
-  </list>
-</ul>
+<div class="container">
+  <div>
+    <h1>생활 복지</h1>
+    <p>생활 복지 목록</p>
+    <p>
+      <a href="/lifecategory/hospital"> 서울시 요양병원 목록</a>
+      <a href="/lifecategory/together"> 노인주거복지시설 안내</a>
+    </p>
+  </div>
+</div> <!--- /container End ---->
+
 </body>
 </html>

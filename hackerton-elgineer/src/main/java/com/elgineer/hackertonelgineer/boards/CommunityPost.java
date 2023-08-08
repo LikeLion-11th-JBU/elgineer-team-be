@@ -1,17 +1,15 @@
-package com.elgineer.hackertonelgineer.dto;
+package com.elgineer.hackertonelgineer.boards;
 
-
-import jdk.jfr.Category;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.xml.stream.events.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity // DB 테이블과 매핑되는 엔티티 클래스임을 JPA에게 알랴줌
-@Data //
-public class CommunityBoardPost {
+@Entity
+@Data
+public class CommunityPost {
 
     @Id // id가 엔티티의 기본 키(primary key) 임을 나타냄
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,28 +27,28 @@ public class CommunityBoardPost {
     private String writer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    // 여러 개의 게시글이 하나의 카테고리에 속할 수 있으므로.
-    // Fetch..=> 지연 로딩을 의미, 실제로 데이터가 필요한 시점에 DB에서 가져옴
     @JoinColumn(name = "category_id")
     // foreign key 를 지정할 때 사용되고, 이 foreign key의 이름을 category_id 로 지정함
     // 게시글이 어느 카테고리에 속하는지 표시하는데 사용됨.
-    private Category category;
+    private CommunityBoard category;
 
-
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     // createAt은 값을 비울 수 없고, 값을 수정할 수 없음.
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    //
+    private List<CommunityBoardComment> comments;
 
     private int likeCount;
 
-    public CommunityBoardPost() {
+    public CommunityPost() {
     }
 
-    public CommunityBoardPost(Long id, String title, String content, String writer, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, List<Comment> comments, int likeCount) {
+    public CommunityPost(Long id, String title, String content, String writer, CommunityBoard category, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityBoardComment> comments, int likeCount) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -94,11 +92,11 @@ public class CommunityBoardPost {
         this.writer = writer;
     }
 
-    public Category getCategory() {
+    public CommunityBoard getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CommunityBoard category) {
         this.category = category;
     }
 
@@ -118,11 +116,11 @@ public class CommunityBoardPost {
         this.updatedAt = updatedAt;
     }
 
-    public List<Comment> getComments() {
+    public List<CommunityBoardComment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(List<CommunityBoardComment> comments) {
         this.comments = comments;
     }
 
@@ -136,7 +134,7 @@ public class CommunityBoardPost {
 
     @Override
     public String toString() {
-        return "CommunityBoardPost{" +
+        return "CommunityPost{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +

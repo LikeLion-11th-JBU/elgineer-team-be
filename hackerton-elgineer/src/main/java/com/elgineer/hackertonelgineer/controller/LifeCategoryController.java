@@ -7,40 +7,57 @@ import com.elgineer.hackertonelgineer.entity.LifeCategory;
 import com.elgineer.hackertonelgineer.service.LifeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.swing.text.Document;
-import java.io.IOException;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @Controller
 public class LifeCategoryController {
-    @Autowired
-    private LifeCategoryService categoryService;
+
 
     @GetMapping("/lifecategory")
-    public String lifemain(Model model) {
-        List<LifeCategory> categories = categoryService.getAllCategories();
-        model.addAttribute("categories", categories);
+    public String lifemain() {
         return "lifecategory.html"; // lifecategory.html을 템플릿으로 사용합니다.
     }
 
-    @GetMapping("/lifecategory/lifewelfare")
-    public String lifewelfare(Model model){
 
-
-        return "welfare.html";
+    @GetMapping("/lifecategory/together")
+    public String together(){
+        return "together.html";
     }
 
-    @GetMapping("/crawl")
-    @ResponseBody
-    public String crawlGoogle() {
-        // 여기서 크롤링 코드를 실행합니다.
-        // 셀레니움과 Jsoup을 사용하여 구글에서 검색 결과를 크롤링하고 나열하는 작업을 수행합니다.
-
-        // 크롤링한 결과를 문자열로 반환합니다.
-        return "Crawling Result";
+    @GetMapping("/lifecategory/guarantee")
+    public String guarantee(){
+        return "guarantee.html";
     }
+
+    @GetMapping("/lifecategory/pension")
+    public String Pension(){
+        return "pension.html";
+    }
+
+    @GetMapping("/lifecategory/work")
+    public String work(){
+        return "work.html";
+    }
+
+
+
+    @GetMapping("/lifecategory/care")
+    public String care(){
+        return "care.html";
+    }
+
+    @GetMapping("/lifecategory/alarm")
+    public String alarm(){
+        return "alarm.html";
+    }
+
+
+
 }
+
+// 카카오맵, 신청서, 접수방법
+
+//        return "redirect:https://www.goodhosrank.com/hospital/hospital_list.php?gubun=%EC%9A%94%EC%96%91%EB%B3%91%EC%9B%90&addcode=11&department=&hostime=&orderby=&hostime2=&pagenum=1&linenum=&stationid=0"; 요양병원
+//         return "redirect:https://easylaw.go.kr/CSP/CnpClsMainBtr.laf?popMenu=ov&csmSeq=673&ccfNo=4&cciNo=1&cnpClsNo=1"; 노인거주 복지시설
