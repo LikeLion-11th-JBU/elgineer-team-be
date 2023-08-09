@@ -1,5 +1,6 @@
 package com.elgineer.hackertonelgineer.boards.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,34 +25,33 @@ public class CommunityPost {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(updatable = false)
     private String writer;
-
-    // Category가 열거형으로 정리되었으므로, 아래 두 어노테이션을 필요가 없음.
-    //    @ManyToOne(fetch = FetchType.LAZY)
-    //    @JoinColumn(name = "category_id")
-    // foreign key 를 지정할 때 사용되고, 이 foreign key의 이름을 category_id 로 지정함
-    // 게시글이 어느 카테고리에 속하는지 표시하는데 사용됨.
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    // createAt은 값을 비울 수 없고, 값을 수정할 수 없음.
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<CommunityPostComment> comments = new ArrayList<>();
 
+    public void addComment(CommunityPostComment comment) {
+        this.comments.add(comment);
+        comment.setCommunityPost(this);
+    }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private CommunityBoard board;
+    public void deleteComment(CommunityPostComment comment) {
+        this.comments.remove(comment);
+        comment.setCommunityPost(null);
+    }
 
     private int likeCount;
 
     public enum Category {
-        HEALTH, EDUCATION, LIFE, FREE
+        HEALTH, EDUCATION, LIFESTYLE, FREESTYLE
     }
     @Enumerated(EnumType.STRING) // 엔티티에 카테고리 필드 추가
     private Category category;
@@ -59,7 +59,7 @@ public class CommunityPost {
     public CommunityPost() {
     }
 
-    public CommunityPost(Long id, String title, String content, String writer, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, CommunityBoard board, int likeCount, Category category) {
+    public CommunityPost(Long id, String title, String content, String writer, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, int likeCount, Category category) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -67,7 +67,6 @@ public class CommunityPost {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.comments = comments;
-        this.board = board;
         this.likeCount = likeCount;
         this.category = category;
     }
@@ -128,14 +127,6 @@ public class CommunityPost {
         this.comments = comments;
     }
 
-    public CommunityBoard getBoard() {
-        return board;
-    }
-
-    public void setBoard(CommunityBoard board) {
-        this.board = board;
-    }
-
     public int getLikeCount() {
         return likeCount;
     }
@@ -162,7 +153,6 @@ public class CommunityPost {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", comments=" + comments +
-                ", board=" + board +
                 ", likeCount=" + likeCount +
                 ", category=" + category +
                 '}';
