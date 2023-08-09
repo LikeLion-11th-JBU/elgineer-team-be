@@ -1,5 +1,11 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.Service;
 
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityBoardRepository;
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostRepository;
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostCommentRepository;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityBoard;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,33 +16,54 @@ import java.util.List;
 
 @Service
 public class CommunityPostServiceImpl implements CommunityPostService{
+
+    private static final String DEFAULT_BOARD_NAME = "community_board";
+    // 기본 게시판을 자유게시판 (community_board) 로 지정.
     private final CommunityBoardRepository communityBoardRepository;
     private final CommunityPostRepository communityPostRepository;
-    private final CommunityBoardCommentRepository communityBoardCommentRepository;
+    private final CommunityPostCommentRepository communityPostCommentRepository;
 
     @Autowired
     public CommunityPostServiceImpl(CommunityBoardRepository communityBoardRepository,
                                          CommunityPostRepository communityBoardPostRepository,
-                                         CommunityBoardCommentRepository communityBoardCommentRepository) {
+                                         CommunityPostCommentRepository communityPostCommentRepository) {
         this.communityBoardRepository = communityBoardRepository;
         this.communityPostRepository = communityBoardPostRepository;
-        this.communityBoardCommentRepository = communityBoardCommentRepository;
+        this.communityPostCommentRepository = communityPostCommentRepository;
     }
 
     // 작성 시간을 현재 시간으로 설정 후, 게시글 생성하고 저장함
     // 카테고리 설정 기능 추가
+
+
+
     @Override
-    public CommunityPost createPost(CommunityPost post, String categoryName) {
-        post.setCreatedAt(LocalDateTime.now());
-
-        CommunityBoard category = communityBoardRepository.findByName(categoryName);
-
-        if (category == null) {
-            // 만약 categoryId가 주어지지 않았을 경우 "자유" 카테고리로 설정
-            category = communityBoardRepository.findByName("자유");
-        }
-        post.setCategory(category);
+    public CommunityPost createPost(CommunityPost post, String category) {
+        String categoryName = mapCategoryName(category);
+        CommunityBoard board = communityBoardRepository.findByName(categoryName)
+                .orElseGet(() -> {
+                    CommunityBoard newBoard = new CommunityBoard();
+                    newBoard.setName(categoryName);
+                    return communityBoardRepository.save(newBoard);
+                });
+        post.setBoard(board);
         return communityPostRepository.save(post);
+    }
+
+    private String mapCategoryName(String categoryName) {
+        if (categoryName == null || categoryName.isBlank() || categoryName.equals("자유")) {
+            return "자유 게시판";
+        }
+        switch (categoryName.toUpperCase()) {
+            case "HEALTH":
+                return "건강";
+            case "EDUCATION":
+                return "교육";
+            case "LIFE":
+                return "생활";
+            default:
+                return "자유"; // 기본값
+        }
     }
 
     // 전체 게시글 조회 기능
@@ -78,34 +105,35 @@ public class CommunityPostServiceImpl implements CommunityPostService{
     @Transactional
     // 트랜잭션 기능을 활성화하기 위해 사용되는 어노테이션.
     // 트랜잭션 : 여러 개의 작업을 하나의 논리적인 작업 단위로 묶어서 DB를 처리함
-    public CommunityBoardComment addComment(Long postId, CommunityBoardComment comment) {
+    public CommunityPostComment addComment(Long postId, CommunityPostComment comment) {
         CommunityPost post = communityPostRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Post not found : " + postId));
 
         comment.setCreatedAt(LocalDateTime.now());
-        comment.communityPostRepository(post);
+        comment.setCommunityPost(post);
 
-        return communityBoardCommentRepository.save(comment);
+        return communityPostCommentRepository.save(comment);
     }
 
     // 게시판에 달린 모든 댓글을 조회하여 리스트로 반환
     //
     @Override
-    public List<CommunityBoardComment> getCommentsForPost(Long postId) {
-        return communityBoardCommentRepository.findByCommunityPostId(postId);
+    public List<CommunityPostComment> getCommentsForPost(Long postId) {
+        return communityPostCommentRepository.findByCommunityPostId(postId);
     }
 
     // commentId 에 해당하는 댓글을 삭제
     //
     @Override
     public void deleteComment(Long commentId) {
-        CommunityBoardComment comment = communityBoardCommentRepository.findById(commentId)
+        CommunityPostComment comment = communityPostCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
-        communityBoardCommentRepository.delete(comment);
+        communityPostCommentRepository.delete(comment);
     }
 
     // 특정 커뮤니티 게시글에 좋아요 추가.
     // postId를 사용하여 해당 게시글 조회 후, 좋아요 카운트 증가하고 저장
+    // 게시글마다 사용자는 단 한 번씩만 좋아요가 가능하도록 하기! (해야할 것)
     @Override
     public CommunityPost addLike(Long postId) {
         CommunityPost post = communityPostRepository.findById(postId)

@@ -1,4 +1,4 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.dto;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class CommunityBoardComment {
+public class CommunityPostComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,14 +23,15 @@ public class CommunityBoardComment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public CommunityPostComment() {
+    }
+
     public void communityPostRepository(CommunityPost post) {
     }
 
-
-    public CommunityBoardComment(Long id, String content, CommunityPost communityPost, LocalDateTime createdAt) {
+    public CommunityPostComment(Long id, String content, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
-        this.communityPost = communityPost;
         this.createdAt = createdAt;
     }
 
@@ -64,16 +65,6 @@ public class CommunityBoardComment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "CommunityBoardComment{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", communityPost=" + communityPost +
-                ", createdAt=" + createdAt +
-                '}';
     }
 
 

@@ -1,13 +1,21 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.Controller;
 
+
+import com.elgineer.hackertonelgineer.boards.Service.CommunityBoardService;
+import com.elgineer.hackertonelgineer.boards.Service.CommunityPostService;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityBoard;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/posts")
 // 일단 '게시판' 생성, 삭제 기능은 넣지 않음 (수정이 필요해 보여서)
 public class CommunityBoardController {
@@ -36,14 +44,19 @@ public class CommunityBoardController {
     // 게시글을 생성할 때, 클라이언트가 선택한 카테고리 이름을 받아와서
     // 해당 카테고리를 찾아 사용함
     @PostMapping
-    public ResponseEntity<CommunityPost> createPost(@RequestBody CommunityPost post,
-                                                    // 선택하지 않으면 자유게시판이 되므로 false로 따로 옵션을 줌
-                                                    @RequestParam(required = false) String categoryName) {
-        CommunityPost createdPost = communityPostService.createPost(post, categoryName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+    public String createPost(@ModelAttribute CommunityPost post,
+                             // 선택하지 않으면 자유게시판이 되므로 false로 따로 옵션을 줌
+                             @RequestParam(required = false) String category) {
+        try {
+            CommunityPost createdPost = communityPostService.createPost(post, category);
+            return "redirect:/api/posts/board";
+        } catch (Exception e) {
+            // 여기서 로깅을 추가할 수 있습니다.
+            return "error";
+        }
     }
 
-    @GetMapping("getall")
+    @GetMapping("readAll")
     public ResponseEntity<List<CommunityPost>> getAllPosts() {
         List<CommunityPost> posts = communityPostService.getAllPosts();
         return ResponseEntity.ok(posts);
@@ -75,14 +88,14 @@ public class CommunityBoardController {
     }
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<CommunityBoardComment> addComment(@PathVariable Long postId, @RequestBody CommunityBoardComment comment) {
-        CommunityBoardComment addedComment = communityPostService.addComment(postId, comment);
+    public ResponseEntity<CommunityPostComment> addComment(@PathVariable Long postId, @RequestBody CommunityPostComment comment) {
+        CommunityPostComment addedComment = communityPostService.addComment(postId, comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedComment);
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommunityBoardComment>> getCommentsForPost(@PathVariable Long postId) {
-        List<CommunityBoardComment> comments = communityPostService.getCommentsForPost(postId);
+    public ResponseEntity<List<CommunityPostComment>> getCommentsForPost(@PathVariable Long postId) {
+        List<CommunityPostComment> comments = communityPostService.getCommentsForPost(postId);
         return ResponseEntity.ok(comments);
     }
 
@@ -103,6 +116,5 @@ public class CommunityBoardController {
         CommunityPost post = communityPostService.removeLike(postId);
         return ResponseEntity.ok(post);
     }
-
 
 }
