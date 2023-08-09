@@ -1,4 +1,4 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.dto;
 
 import javax.persistence.*;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.dto;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,19 +23,15 @@ public class CommunityPostComment {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public void setCommunityPost(CommunityPost communityPost){
-        this.communityPost = communityPost;
-        communityPost.getComments().add(this);
-        //
+    public CommunityPostComment() {
     }
 
     public void communityPostRepository(CommunityPost post) {
     }
 
-    public CommunityPostComment(Long id, String content, CommunityPost communityPost, LocalDateTime createdAt) {
+    public CommunityPostComment(Long id, String content, LocalDateTime createdAt) {
         this.id = id;
         this.content = content;
-        this.communityPost = communityPost;
         this.createdAt = createdAt;
     }
 
@@ -57,6 +53,10 @@ public class CommunityPostComment {
 
     public CommunityPost getCommunityPost() {
         return communityPost;
+    }
+
+    public void setCommunityPost(CommunityPost communityPost) {
+        this.communityPost = communityPost;
     }
 
     public LocalDateTime getCreatedAt() {

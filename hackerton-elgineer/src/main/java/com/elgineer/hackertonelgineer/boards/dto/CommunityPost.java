@@ -1,4 +1,4 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.dto;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,12 +32,6 @@ public class CommunityPost {
     //    @JoinColumn(name = "category_id")
     // foreign key 를 지정할 때 사용되고, 이 foreign key의 이름을 category_id 로 지정함
     // 게시글이 어느 카테고리에 속하는지 표시하는데 사용됨.
-    public enum Category {
-        HEALTH, EDUCATION, LIFE, FREEDOM
-    }
-
-    @Enumerated(EnumType.STRING) // 엔티티에 카테고리 필드 추가
-    private Category category;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -49,40 +43,33 @@ public class CommunityPost {
     @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityPostComment> comments = new ArrayList<>();
 
-    public void addComment(CommunityPostComment comment) {
-        comments.add(comment);
-        comment.setCommunityPost(this);
-    }
-
-    public void removeComment(CommunityPostComment comment) {
-        comments.remove(comment);
-        comment.setCommunityPost(null);
-    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private CommunityBoard board;
 
-    public void setBoard(CommunityBoard board){
-        this.board = board;
-    }
-
     private int likeCount;
+
+    public enum Category {
+        HEALTH, EDUCATION, LIFE, FREE
+    }
+    @Enumerated(EnumType.STRING) // 엔티티에 카테고리 필드 추가
+    private Category category;
 
     public CommunityPost() {
     }
 
-    public CommunityPost(Long id, String title, String content, String writer, Category category, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, CommunityBoard board, int likeCount) {
+    public CommunityPost(Long id, String title, String content, String writer, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, CommunityBoard board, int likeCount, Category category) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.writer = writer;
-        this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.comments = comments;
         this.board = board;
         this.likeCount = likeCount;
+        this.category = category;
     }
 
     public Long getId() {
@@ -117,14 +104,6 @@ public class CommunityPost {
         this.writer = writer;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -153,7 +132,7 @@ public class CommunityPost {
         return board;
     }
 
-    public void setCommunityBoard(CommunityBoard board) {
+    public void setBoard(CommunityBoard board) {
         this.board = board;
     }
 
@@ -165,6 +144,14 @@ public class CommunityPost {
         this.likeCount = likeCount;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "CommunityPost{" +
@@ -172,15 +159,12 @@ public class CommunityPost {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", writer='" + writer + '\'' +
-                ", category=" + category +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", comments=" + comments +
                 ", board=" + board +
                 ", likeCount=" + likeCount +
+                ", category=" + category +
                 '}';
     }
-
-    // 이제 카테고리는 저 4가지의 값 중 하나만 가질 수 있음.
-
 }

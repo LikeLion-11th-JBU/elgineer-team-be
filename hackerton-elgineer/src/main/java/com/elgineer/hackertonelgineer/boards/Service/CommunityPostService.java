@@ -1,4 +1,10 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.Service;
+
+
+
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
+
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 
 import java.util.List;
 

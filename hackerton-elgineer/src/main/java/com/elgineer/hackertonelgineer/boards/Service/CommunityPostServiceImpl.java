@@ -1,5 +1,11 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.Service;
 
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityBoardRepository;
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostRepository;
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostCommentRepository;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityBoard;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +16,9 @@ import java.util.List;
 
 @Service
 public class CommunityPostServiceImpl implements CommunityPostService{
+
+    private static final String DEFAULT_BOARD_NAME = "community_board";
+    // 기본 게시판을 자유게시판 (community_board) 로 지정.
     private final CommunityBoardRepository communityBoardRepository;
     private final CommunityPostRepository communityPostRepository;
     private final CommunityPostCommentRepository communityPostCommentRepository;
@@ -29,18 +38,33 @@ public class CommunityPostServiceImpl implements CommunityPostService{
 
 
     @Override
-    public CommunityPost createPost(CommunityPost post, String boardName) {
-        CommunityBoard board = communityBoardRepository.findByName(boardName);
-        if (board == null) {
-            throw new IllegalArgumentException("Board not found with name: " + boardName);
-        }
-
-        post.setBoard(board); // 게시글 객체에 카테고리 설정
+    public CommunityPost createPost(CommunityPost post, String category) {
+        String categoryName = mapCategoryName(category);
+        CommunityBoard board = communityBoardRepository.findByName(categoryName)
+                .orElseGet(() -> {
+                    CommunityBoard newBoard = new CommunityBoard();
+                    newBoard.setName(categoryName);
+                    return communityBoardRepository.save(newBoard);
+                });
+        post.setBoard(board);
         return communityPostRepository.save(post);
     }
 
-
-
+    private String mapCategoryName(String categoryName) {
+        if (categoryName == null || categoryName.isBlank() || categoryName.equals("자유")) {
+            return "자유 게시판";
+        }
+        switch (categoryName.toUpperCase()) {
+            case "HEALTH":
+                return "건강";
+            case "EDUCATION":
+                return "교육";
+            case "LIFE":
+                return "생활";
+            default:
+                return "자유"; // 기본값
+        }
+    }
 
     // 전체 게시글 조회 기능
     @Override

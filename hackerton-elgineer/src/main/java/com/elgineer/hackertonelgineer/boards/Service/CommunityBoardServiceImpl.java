@@ -1,10 +1,15 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.Service;
 
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityBoardRepository;
+import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostRepository;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityBoard;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommunityBoardServiceImpl implements CommunityBoardService{
@@ -43,7 +48,7 @@ public class CommunityBoardServiceImpl implements CommunityBoardService{
     }
 
     @Override
-    public CommunityBoard getCommunityBoardByName(String name) {
+    public Optional<CommunityBoard> getCommunityBoardByName(String name) {
         return communityBoardRepository.findByName(name);
     }
 

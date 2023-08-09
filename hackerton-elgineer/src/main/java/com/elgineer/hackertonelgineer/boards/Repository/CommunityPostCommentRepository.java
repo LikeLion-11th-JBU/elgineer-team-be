@@ -1,5 +1,6 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.Repository;
 
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
