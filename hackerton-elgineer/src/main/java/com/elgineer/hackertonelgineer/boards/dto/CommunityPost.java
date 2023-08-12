@@ -1,6 +1,9 @@
 package com.elgineer.hackertonelgineer.boards.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CommunityPost {
 
     @Id // id가 엔티티의 기본 키(primary key) 임을 나타냄
@@ -35,8 +39,13 @@ public class CommunityPost {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference(value = "post-comments")
     private List<CommunityPostComment> comments = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference(value = "user-posts")
+    private User user;
 
     public void addComment(CommunityPostComment comment) {
         this.comments.add(comment);
@@ -59,7 +68,7 @@ public class CommunityPost {
     public CommunityPost() {
     }
 
-    public CommunityPost(Long id, String title, String content, String writer, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, int likeCount, Category category) {
+    public CommunityPost(Long id, String title, String content, String writer, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, User user, int likeCount, Category category) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -67,6 +76,7 @@ public class CommunityPost {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.comments = comments;
+        this.user = user;
         this.likeCount = likeCount;
         this.category = category;
     }
@@ -141,6 +151,14 @@ public class CommunityPost {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

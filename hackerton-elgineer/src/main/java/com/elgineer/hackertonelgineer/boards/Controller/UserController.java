@@ -27,6 +27,8 @@ public class UserController {
     public String login(@RequestBody User user) {
         User loggedInUser = userService.loginUser(user.getUsername(), user.getPassword());
         if (loggedInUser != null) {
+            session.setAttribute("loggedInUser", loggedInUser);
+            // 로그인 성공 시 세션에 "loggedInUser" 속성 설정
             return "로그인 성공";
         }
         return "로그인 실패";

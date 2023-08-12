@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public User getLoggedInUser() {
+        return (User) session.getAttribute("loggedInUser");
+    }
+
+    @Override
     public void logoutUser() {
         session.removeAttribute("loggedInUser");
     }

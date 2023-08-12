@@ -1,6 +1,9 @@
 package com.elgineer.hackertonelgineer.boards.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -8,6 +11,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CommunityPostComment {
 
     @Id
@@ -18,7 +23,7 @@ public class CommunityPostComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    @JsonBackReference
+    @JsonBackReference(value = "post-comments")
     private CommunityPost communityPost;
     // 게시글 하나에 다수의 댓글 생성가능
 
@@ -33,17 +38,22 @@ public class CommunityPostComment {
     @Column(updatable = false)
     private String writer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference(value = "user-comments")
+    private User user;
 
     public CommunityPostComment() {
     }
 
-    public void communityPostRepository(CommunityPost post) {
-    }
-
-    public CommunityPostComment(Long id, String content, LocalDateTime createdAt) {
+    public CommunityPostComment(Long id, String content, CommunityPost communityPost, LocalDateTime createdAt, LocalDateTime updatedAt, String writer, User user) {
         this.id = id;
         this.content = content;
+        this.communityPost = communityPost;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.writer = writer;
+        this.user = user;
     }
 
     public Long getId() {
@@ -104,5 +114,13 @@ public class CommunityPostComment {
 
     public void setWriter(String writer) {
         this.writer = writer;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

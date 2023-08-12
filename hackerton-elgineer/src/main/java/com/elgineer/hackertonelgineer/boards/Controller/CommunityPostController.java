@@ -48,16 +48,6 @@ public class CommunityPostController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{postId}/comments")
-    public ResponseEntity<CommunityPostComment> addCommentToPost(@PathVariable Long postId, @RequestBody CommunityPostComment comment) {
-        return ResponseEntity.ok(postService.addComment(postId, comment));
-    }
-
-    @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommunityPostComment>> getCommentsForPost(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.getCommentsForPost(postId));
-    }
-
     @PostMapping("/{postId}/like")
     public ResponseEntity<CommunityPost> addLike(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.addLike(postId));
