@@ -57,4 +57,15 @@ public class CommunityPostController {
     public ResponseEntity<List<CommunityPostComment>> getCommentsForPost(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getCommentsForPost(postId));
     }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<CommunityPost> addLike(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.addLike(postId));
+    }
+
+    @DeleteMapping("/{postId}/like")
+    public ResponseEntity<CommunityPost> removeLike(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.removeLike(postId));
+    }
+
 }
