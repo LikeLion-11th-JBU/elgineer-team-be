@@ -4,6 +4,7 @@ import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostCommentRepo
 import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostRepository;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
+import com.elgineer.hackertonelgineer.boards.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +21,14 @@ public class CommunityPostServiceImpl implements CommunityPostService{
     @Autowired
     private CommunityPostCommentRepository commentRepository;
 
+    @Autowired
+    private UserServiceImpl userService;
+
     @Override
     public CommunityPost createPost(CommunityPost post) {
-        if (post.getCategory() != null) {
-            try {
-                CommunityPost.Category selectedCategory = CommunityPost.Category.valueOf(post.getCategory().name().toUpperCase());
-                post.setCategory(selectedCategory);
-            } catch (IllegalArgumentException e) {
-                // Invalid category provided, handle appropriately
-            }
+        User loggedInUser = userService.getLoggedInUser();
+        if (loggedInUser != null) {
+            post.setWriter(loggedInUser.getNickname());
         }
         return postRepository.save(post);
     }

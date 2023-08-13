@@ -4,6 +4,7 @@ import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostCommentRepo
 import com.elgineer.hackertonelgineer.boards.Repository.CommunityPostRepository;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
+import com.elgineer.hackertonelgineer.boards.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +22,18 @@ public class CommunityPostCommentServiceImpl implements CommunityPostCommentServ
     @Autowired
     private CommunityPostCommentRepository communityPostCommentRepository;
 
-
     @Autowired
     private CommunityPostCommentRepository commentRepository;
 
+    @Autowired
+    private UserServiceImpl userService;
+
     @Override
     public CommunityPostComment createComment(CommunityPostComment comment, Long postId) {
+        User loggedInUser = userService.getLoggedInUser();
+        if (loggedInUser != null) {
+            comment.setWriter(loggedInUser.getNickname());
+        }
         Optional<CommunityPost> postOptional = postRepository.findById(postId);
         if (postOptional.isPresent()) {
             CommunityPost post = postOptional.get();
