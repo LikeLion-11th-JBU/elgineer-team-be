@@ -1,5 +1,9 @@
-package com.elgineer.hackertonelgineer.boards;
+package com.elgineer.hackertonelgineer.boards.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -10,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Data
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CommunityPost {
 
     @Id // id가 엔티티의 기본 키(primary key) 임을 나타냄
@@ -24,41 +29,56 @@ public class CommunityPost {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column(updatable = false)
     private String writer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    // foreign key 를 지정할 때 사용되고, 이 foreign key의 이름을 category_id 로 지정함
-    // 게시글이 어느 카테고리에 속하는지 표시하는데 사용됨.
-    private CommunityBoard category;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    // createAt은 값을 비울 수 없고, 값을 수정할 수 없음.
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "communityPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    //
-    private List<CommunityBoardComment> comments = new ArrayList<>();
+    @JsonManagedReference(value = "post-comments")
+    private List<CommunityPostComment> comments = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference(value = "user-posts")
+    private User user;
+
+    public void addComment(CommunityPostComment comment) {
+        this.comments.add(comment);
+        comment.setCommunityPost(this);
+    }
+
+    public void deleteComment(CommunityPostComment comment) {
+        this.comments.remove(comment);
+        comment.setCommunityPost(null);
+    }
 
     private int likeCount;
+
+    public enum Category {
+        HEALTH, EDUCATION, LIFESTYLE, FREESTYLE
+    }
+    @Enumerated(EnumType.STRING) // 엔티티에 카테고리 필드 추가
+    private Category category;
 
     public CommunityPost() {
     }
 
-    public CommunityPost(Long id, String title, String content, String writer, CommunityBoard category, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityBoardComment> comments, int likeCount) {
+    public CommunityPost(Long id, String title, String content, String writer, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommunityPostComment> comments, User user, int likeCount, Category category) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.writer = writer;
-        this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.comments = comments;
+        this.user = user;
         this.likeCount = likeCount;
+        this.category = category;
     }
 
     public Long getId() {
@@ -93,14 +113,6 @@ public class CommunityPost {
         this.writer = writer;
     }
 
-    public CommunityBoard getCategory() {
-        return category;
-    }
-
-    public void setCategory(CommunityBoard category) {
-        this.category = category;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -117,11 +129,11 @@ public class CommunityPost {
         this.updatedAt = updatedAt;
     }
 
-    public List<CommunityBoardComment> getComments() {
+    public List<CommunityPostComment> getComments() {
         return comments;
     }
 
-    public void setComments(List<CommunityBoardComment> comments) {
+    public void setComments(List<CommunityPostComment> comments) {
         this.comments = comments;
     }
 
@@ -133,6 +145,22 @@ public class CommunityPost {
         this.likeCount = likeCount;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "CommunityPost{" +
@@ -140,11 +168,11 @@ public class CommunityPost {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", writer='" + writer + '\'' +
-                ", category=" + category +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", comments=" + comments +
                 ", likeCount=" + likeCount +
+                ", category=" + category +
                 '}';
     }
 }

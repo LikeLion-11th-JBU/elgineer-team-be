@@ -29,7 +29,6 @@ public class LifeCategoryDto {
         this.id = id;
 
         this.content = content;
-
     }
 
 }
