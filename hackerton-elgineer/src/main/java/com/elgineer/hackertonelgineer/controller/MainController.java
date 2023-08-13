@@ -23,6 +23,6 @@ public class MainController {
 
     @GetMapping("/healthcategory")
     public String heealthmain(){
-        return "health.html";
+        return "healthhome.html";
     }
 }
