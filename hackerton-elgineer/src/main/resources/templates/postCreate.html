@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>게시글 작성</title>
+</head>
+<body>
+
+<div th:if="${!loggedIn}">
+  <p>로그인이 필요한 서비스입니다.</p>
+  <a href="/user/login">로그인 페이지로 이동</a>
+</div>
+
+<div th:if="${loggedIn}">
+  <h1>게시글 작성</h1>
+
+  <form action="/board" method="post">
+    <div>
+      <label for="title">제목:</label>
+      <input type="text" id="title" name="title">
+    </div>
+    <div>
+      <label for="content">내용:</label>
+      <textarea id="content" name="content"></textarea>
+    </div>
+    <button type="submit">게시글 작성하기</button>
+  </form>
+</div>
+
+</body>
+</html>

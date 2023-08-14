@@ -1,13 +1,13 @@
 package com.elgineer.hackertonelgineer.boards.Controller;
 
 import com.elgineer.hackertonelgineer.boards.Service.CommunityPostCommentService;
-import com.elgineer.hackertonelgineer.boards.Service.CommunityPostService;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/comments")
 public class CommunityPostCommentController {
 
@@ -27,24 +27,29 @@ public class CommunityPostCommentController {
     private CommunityPostCommentService communityPostCommentService;
 
     @PostMapping("/{postId}")
-    public ResponseEntity<CommunityPostComment> createComment(@RequestBody CommunityPostComment comment, @PathVariable Long postId) {
-        return ResponseEntity.ok(communityPostCommentService.createComment(comment, postId));
+    public String createComment(@ModelAttribute CommunityPostComment comment, @PathVariable Long postId, Model model) {
+        CommunityPostComment savedComment = communityPostCommentService.createComment(comment, postId);
+        model.addAttribute("comment", savedComment);
+        return "redirect:/postDetails";
     }
 
     @GetMapping("/{commentId}")
-    public ResponseEntity<CommunityPostComment> getCommentById(@PathVariable Long commentId) {
-        return ResponseEntity.ok(communityPostCommentService.getCommentById(commentId));
+    public String getCommentById(@PathVariable Long commentId, Model model) {
+        CommunityPostComment comment = communityPostCommentService.getCommentById(commentId);
+        model.addAttribute("comment", comment);
+        return "redirect:/postDetails";
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<CommunityPostComment> updateComment(@PathVariable Long commentId, @RequestBody UpdateCommentRequest content) {
+    public String updateComment(@PathVariable Long commentId, @ModelAttribute UpdateCommentRequest content, Model model) {
         CommunityPostComment updatedComment = communityPostCommentService.updateComment(commentId, content.getContent());
-        return ResponseEntity.ok(updatedComment);
+        model.addAttribute("comment", updatedComment);
+        return "redirect:/postDetails";
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+    public String deleteComment(@PathVariable Long commentId) {
         communityPostCommentService.deleteComment(commentId);
-        return ResponseEntity.ok().build();
+        return "redirect:/postDetails";
     }
 }

@@ -2,60 +2,88 @@ package com.elgineer.hackertonelgineer.boards.Controller;
 
 import com.elgineer.hackertonelgineer.boards.Service.CommunityPostService;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
-import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import javax.servlet.http.HttpSession;
 
-@RestController
+@Controller
 @RequestMapping("/board")
 public class CommunityPostController {
 
     @Autowired
     private CommunityPostService postService;
 
-    @PostMapping
-    public ResponseEntity<CommunityPost> createPost(@RequestBody CommunityPost post) {
-        return ResponseEntity.ok(postService.createPost(post));
-    }
+    @Autowired
+    private HttpSession session;
 
     @GetMapping
-    public ResponseEntity<List<CommunityPost>> getAllPosts() {
+    public String displayBoard(Model model) {
         List<CommunityPost> posts = postService.getAllPosts();
-        if (posts == null || posts.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(posts);
-//        return ResponseEntity.ok(postService.getAllPosts());
+        model.addAttribute("posts", posts);
+        return "board";
+    }
+
+    @PostMapping
+    public String createPost(CommunityPost post) {
+        postService.createPost(post);
+        return "redirect:/board";
+    }
+
+    @GetMapping("/create")
+    public String createPostPage(Model model) {
+        boolean loggedIn = session.getAttribute("loggedInUser") != null;
+        model.addAttribute("loggedIn", loggedIn);
+        return "postCreate";
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<CommunityPost> getPostById(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.getPostById(postId));
+    public String getPostById(@PathVariable Long postId, Model model) {
+        CommunityPost post = postService.getPostById(postId);
+        model.addAttribute("post", post);
+        return "postDetails";
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<CommunityPost> updatePost(@PathVariable Long postId, @RequestBody CommunityPost updatedPost) {
-        updatedPost.setId(postId);
-        return ResponseEntity.ok(postService.updatePost(updatedPost));
+    public String updatePost(@PathVariable Long postId, CommunityPost updatedPost) {
+        CommunityPost existingPost = postService.getPostById(postId);
+        if (existingPost == null) {
+            return "redirect:/board";
+        }
+        existingPost.setTitle(updatedPost.getTitle());
+        existingPost.setContent(updatedPost.getContent());
+
+        postService.updatePost(existingPost);
+
+        return "redirect:/board/" + postId;
     }
 
+
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+    public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-        return ResponseEntity.ok().build();
+        return "redirect:/board";
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<CommunityPost> addLike(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.addLike(postId));
+    public String addLike(@PathVariable Long postId) {
+        postService.addLike(postId);
+        return "redirect:/postDetails";
     }
 
     @DeleteMapping("/{postId}/like")
-    public ResponseEntity<CommunityPost> removeLike(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.removeLike(postId));
+    public String removeLike(@PathVariable Long postId) {
+        postService.removeLike(postId);
+        return "redirect:/postDetails";
+    }
+
+    @GetMapping("/isAuthenticated")
+    @ResponseBody
+    public boolean isAuthenticated() {
+        return session.getAttribute("loggedInUser") != null;
     }
 
 }
