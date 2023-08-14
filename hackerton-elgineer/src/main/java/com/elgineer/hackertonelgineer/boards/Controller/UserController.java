@@ -27,7 +27,7 @@ public class UserController {
     public String register(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         userService.registerUser(user, encodedPassword);
-        return "redirect:/user/register";
+        return "redirect:/login";
     }
 
     @PostMapping("/login")
