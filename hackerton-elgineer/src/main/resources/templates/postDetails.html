@@ -14,9 +14,8 @@
 <!-- 좋아요 취소 버튼 -->
 <button id="unlikeButton" onclick="removeLike()">👍 좋아요 취소</button>
 
-
 <!-- 로그인한 사용자와 게시글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
-<div th:if="${loggedInUserNickname == post.writerNickname}">
+<div th:if="${loggedInUserNickname == post.writer}">
     <!-- 게시글 수정 -->
     <a th:href="@{'/board/update/' + ${post.id}}"><button>게시글 수정</button></a>
 
@@ -36,8 +35,8 @@
 <div th:each="comment : ${comments}">
     <p th:text="${comment.content}">댓글 내용</p>
 
-    <!-- 로그인한 사용자와 댓글 작성자가 동일한 경우만 수정 및 삭제 버튼 표시 -->
-    <div th:if="${loggedInUserNickname == comment.writerNickname}">
+    <!-- 로그인한 사용자와 댓글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
+    <div th:if="${loggedInUserNickname == comment.writer}">
 
         <!-- 댓글 수정 -->
         <button onclick="showEditBox(this)">수정</button>
@@ -58,7 +57,7 @@
     function deletePost(postId) {
         const confirmDelete = confirm("게시글을 삭제하시겠습니까?");
         if (confirmDelete) {
-            fetch(`/api/posts/${postId}`, {
+            fetch(`/board/${postId}`, {  // URL 수정
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -66,7 +65,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = "/board/list";
+                    window.location.href = "/board";
                 } else {
                     alert("게시글 삭제에 실패하였습니다.");
                 }
@@ -76,7 +75,7 @@
 
     function createComment() {
         const content = document.getElementById('commentContent').value;
-        fetch(`/comments/${postId}`, {
+        fetch(`/comments/${postId}`, {  // URL 수정
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -96,7 +95,7 @@
 
     function updateComment(button, commentId) {
         const editedContent = button.previousElementSibling.value;
-        fetch(`/comments/${commentId}`, {
+        fetch(`/comments/${commentId}`, {  // URL 수정
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -112,7 +111,7 @@
     function deleteComment(commentId) {
         const confirmDelete = confirm("댓글을 삭제하시겠습니까?");
         if (confirmDelete) {
-            fetch(`/comments/${commentId}`, {
+            fetch(`/comments/${commentId}`, {  // URL 수정
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -129,7 +128,7 @@
     }
 
     function addLike() {
-        fetch(`/api/posts/${postId}/like`, {
+        fetch(`/board/${postId}/like`, {  // URL 수정
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -142,7 +141,10 @@
     }
 
     function removeLike() {
-        fetch(`/api/posts/${postId}/like`, {
+        fetch(`/board/${postId}/like`, {  //
+
+    function removeLike() {
+        fetch(`/board/${postId}/like`, {  // URL 수정
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -150,9 +152,14 @@
         })
         .then(response => response.json())
         .then(data => {
-            // 여기에 좋아요 수를 업데이트하는 로직 등이 필요하다면 추가
+            // 여기에 좋아요 수 감소를 반영하는 로직 등이 필요하다면 추가
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("좋아요 취소에 실패하였습니다.");
         });
     }
+
 </script>
 
 </body>

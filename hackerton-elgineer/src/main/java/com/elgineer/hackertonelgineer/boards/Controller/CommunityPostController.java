@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/board")
@@ -15,6 +16,9 @@ public class CommunityPostController {
 
     @Autowired
     private CommunityPostService postService;
+
+    @Autowired
+    private HttpSession session;
 
     @GetMapping
     public String displayBoard(Model model) {
@@ -29,19 +33,34 @@ public class CommunityPostController {
         return "redirect:/board";
     }
 
+    @GetMapping("/create")
+    public String createPostPage(Model model) {
+        boolean loggedIn = session.getAttribute("loggedInUser") != null;
+        model.addAttribute("loggedIn", loggedIn);
+        return "postCreate";
+    }
+
     @GetMapping("/{postId}")
     public String getPostById(@PathVariable Long postId, Model model) {
         CommunityPost post = postService.getPostById(postId);
         model.addAttribute("post", post);
-        return "redirect:/postDetails";
+        return "postDetails";
     }
 
     @PutMapping("/{postId}")
     public String updatePost(@PathVariable Long postId, CommunityPost updatedPost) {
-        updatedPost.setId(postId);
-        postService.updatePost(updatedPost);
-        return "redirect:/board";
+        CommunityPost existingPost = postService.getPostById(postId);
+        if (existingPost == null) {
+            return "redirect:/board";
+        }
+        existingPost.setTitle(updatedPost.getTitle());
+        existingPost.setContent(updatedPost.getContent());
+
+        postService.updatePost(existingPost);
+
+        return "redirect:/board/" + postId;
     }
+
 
     @DeleteMapping("/{postId}")
     public String deletePost(@PathVariable Long postId) {
@@ -52,12 +71,19 @@ public class CommunityPostController {
     @PostMapping("/{postId}/like")
     public String addLike(@PathVariable Long postId) {
         postService.addLike(postId);
-        return "redirect:/board";
+        return "redirect:/postDetails";
     }
 
     @DeleteMapping("/{postId}/like")
     public String removeLike(@PathVariable Long postId) {
         postService.removeLike(postId);
-        return "redirect:/board";
+        return "redirect:/postDetails";
     }
+
+    @GetMapping("/isAuthenticated")
+    @ResponseBody
+    public boolean isAuthenticated() {
+        return session.getAttribute("loggedInUser") != null;
+    }
+
 }

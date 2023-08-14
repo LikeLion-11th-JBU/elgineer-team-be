@@ -26,9 +26,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-//	implementation 'io.jsonwebtoken:jjwt:0.9.1'
-	// 회원가입 로그인 기능 구현을 위해 spring security, jjwt 의존성 추가
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// 회원가입 로그인 기능 구현을 위해 spring security 의존성 추가
 	compileOnly 'org.projectlombok:lombok'
 
 	runtimeOnly 'com.h2database:h2'
