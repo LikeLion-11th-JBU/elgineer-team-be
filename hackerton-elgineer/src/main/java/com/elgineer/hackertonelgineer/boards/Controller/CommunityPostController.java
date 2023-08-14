@@ -2,60 +2,62 @@ package com.elgineer.hackertonelgineer.boards.Controller;
 
 import com.elgineer.hackertonelgineer.boards.Service.CommunityPostService;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
-import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/board")
 public class CommunityPostController {
 
     @Autowired
     private CommunityPostService postService;
 
-    @PostMapping
-    public ResponseEntity<CommunityPost> createPost(@RequestBody CommunityPost post) {
-        return ResponseEntity.ok(postService.createPost(post));
+    @GetMapping
+    public String displayBoard(Model model) {
+        List<CommunityPost> posts = postService.getAllPosts();
+        model.addAttribute("posts", posts);
+        return "board";
     }
 
-    @GetMapping
-    public ResponseEntity<List<CommunityPost>> getAllPosts() {
-        List<CommunityPost> posts = postService.getAllPosts();
-        if (posts == null || posts.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(posts);
-//        return ResponseEntity.ok(postService.getAllPosts());
+    @PostMapping
+    public String createPost(CommunityPost post) {
+        postService.createPost(post);
+        return "redirect:/board";
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<CommunityPost> getPostById(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.getPostById(postId));
+    public String getPostById(@PathVariable Long postId, Model model) {
+        CommunityPost post = postService.getPostById(postId);
+        model.addAttribute("post", post);
+        return "redirect:/postDetails";
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<CommunityPost> updatePost(@PathVariable Long postId, @RequestBody CommunityPost updatedPost) {
+    public String updatePost(@PathVariable Long postId, CommunityPost updatedPost) {
         updatedPost.setId(postId);
-        return ResponseEntity.ok(postService.updatePost(updatedPost));
+        postService.updatePost(updatedPost);
+        return "redirect:/board";
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+    public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-        return ResponseEntity.ok().build();
+        return "redirect:/board";
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<CommunityPost> addLike(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.addLike(postId));
+    public String addLike(@PathVariable Long postId) {
+        postService.addLike(postId);
+        return "redirect:/board";
     }
 
     @DeleteMapping("/{postId}/like")
-    public ResponseEntity<CommunityPost> removeLike(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.removeLike(postId));
+    public String removeLike(@PathVariable Long postId) {
+        postService.removeLike(postId);
+        return "redirect:/board";
     }
-
 }
