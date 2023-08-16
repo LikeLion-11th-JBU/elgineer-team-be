@@ -53,10 +53,10 @@ public class LifeCategoryController {
         return "lifecategory/care.html";
     }
 
-    @GetMapping("/lifacategory/care/info")
+    @GetMapping("/lifecategory/care/info")
     public String careinfo() { return "redirect:https://www.mohw.go.kr/react/policy/index.jsp?PAR_MENU_ID=06&MENU_ID=06390104&PAGE=4&topTitle=";}
 
-    @GetMapping("/lifacategory/care/application")
+    @GetMapping("/lifecategory/care/application")
     public String careApp() { return "redirect:https://www.sd.go.kr/downloadSFT.do?s=main&f=cts4252_file1.hwp&t=%EB%85%B8%EC%9D%B8%EB%A7%9E%EC%B6%A4%EB%8F%8C%EB%B4%84%EC%84%9C%EB%B9%84%EC%8A%A4_%EC%8B%A0%EC%B2%AD%EC%84%9C.hwp";}
     @GetMapping("/lifecategory/alarm") // 노인 응급안전안심 서비스
     public String alarm(){
