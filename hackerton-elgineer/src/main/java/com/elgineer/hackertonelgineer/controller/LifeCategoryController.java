@@ -7,17 +7,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class LifeCategoryController {
+    @GetMapping("/lifecategory")
+    public String lifemain() {
 
+        return "lifecategory.html"; // lifecategory.html을 템플릿으로 사용합니다.
+    }
     @GetMapping("/lifecategory/together") // 노인주거복지제도, 관련 신청서 지역별로 있음
     public String together(){
-        return "together.html";
+        return "lifecategory/together.html";
     }
     @GetMapping("/lifecategory/together/info")
     public String togetherinfo(){ return "redirect:https://easylaw.go.kr/CSP/CnpClsMainBtr.laf?popMenu=ov&csmSeq=673&ccfNo=4&cciNo=1&cnpClsNo=1";}
 
     @GetMapping("/lifecategory/guarantee") // 기초생활보장제도
     public String guarantee(){
-        return "guarantee.html";
+        return "lifecategory/guarantee.html";
     }
 
     @GetMapping("/lifecategory/guarantee/info")
@@ -27,7 +31,7 @@ public class LifeCategoryController {
     public String guaranteeApp() { return "redirect:https://www.seongnam.go.kr/contents/down/health/10961_12.pdf";}
     @GetMapping("/lifecategory/pension") // 기초연금
     public String pension(){
-        return "pension.html";
+        return "lifecategory/pension.html";
     }
 
     @GetMapping("/lifecategory/pension/info")
@@ -38,7 +42,7 @@ public class LifeCategoryController {
 
     @GetMapping("/lifecategory/work") // 노인일자리지원 사업 , 신청방법은 지역내 관련 기관에 문의해야함.
     public String work(){
-        return "work.html";
+        return "lifecategory/work.html";
     }
 
     @GetMapping("lifecategory/work/info")
@@ -47,7 +51,7 @@ public class LifeCategoryController {
 
     @GetMapping("/lifecategory/care") // 노인 맞춤돌봄 서비스
     public String care(){
-        return "care.html";
+        return "lifecategory/care.html";
     }
 
     @GetMapping("/lifecategory/care/info")
@@ -57,7 +61,7 @@ public class LifeCategoryController {
     public String careApp() { return "redirect:https://www.sd.go.kr/downloadSFT.do?s=main&f=cts4252_file1.hwp&t=%EB%85%B8%EC%9D%B8%EB%A7%9E%EC%B6%A4%EB%8F%8C%EB%B4%84%EC%84%9C%EB%B9%84%EC%8A%A4_%EC%8B%A0%EC%B2%AD%EC%84%9C.hwp";}
     @GetMapping("/lifecategory/alarm") // 노인 응급안전안심 서비스
     public String alarm(){
-        return "alarm.html";
+        return "lifecategory/alarm.html";
     }
 
     @GetMapping("/lifecategory/alarm/info")
