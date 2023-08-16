@@ -1,0 +1,204 @@
+.main {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.main_left,
+.main_right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 33%;
+  align-items: center;
+  background-color: lightpink ;
+}
+
+.main_center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 34%;
+  align-items: center;
+  background-color: lightpink;
+}
+
+.main_center img {
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.main_left button,
+.main_right button {
+  position: relative;
+  border: none;
+  border-radius: 50%;
+  width: 20rem;
+  height: 20rem;
+  padding: 20px;
+  font-size: 2rem;
+  background-color: aliceblue;
+  color: #1e6b7b;
+  transition: 0.3s;
+}
+
+.main_left button:hover,
+.main_right button:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.main_left button:hover::after,
+.main_right button:hover::after {
+  content: "";
+  width: 21rem;
+  height: 21rem;
+  border-radius: 100%;
+  border: 6px solid #00ffcb;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ring 1.5s infinite;
+}
+
+/* health */
+.health_wrap {
+  height: 100vh;
+  background-color: lightskyblue;
+  display: flex;
+  flex-direction: column;
+}
+
+.health_top,
+.health_bottom {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.health_top button,
+.health_bottom button {
+  position: relative;
+  border: none;
+  border-radius: 50%;
+  width: 20rem;
+  height: 20rem;
+  padding: 20px;
+  font-size: 2rem;
+  background-color: aliceblue;
+  color: #1e6b7b;
+  transition: 0.3s;
+}
+
+.health_top button:hover,
+.health_bottom button:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.health_top button:hover::after,
+.health_bottom button:hover::after {
+  content: "";
+  width: 21rem;
+  height: 21rem;
+  border-radius: 100%;
+  border: 6px solid #00ffcb;
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ring 1.5s infinite;
+}
+
+/* edu 1*/
+.edu_wrap {
+  height: 100vh;
+  background-color: lightskyblue;
+}
+
+.mySlides {
+  display: none;
+}
+
+.mySlides img {
+  max-height: 90vh;
+}
+
+.slideshow-container {
+  max-width: 600px;
+  padding: 10px;
+  position: relative;
+  margin: auto;
+}
+
+.prev,
+.next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: red;
+  font-weight: bold;
+  font-size: 40px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active,
+.dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media only screen and (max-width: 300px) {
+  .prev,
+  .next,
+  .text {
+    font-size: 11px;
+  }
+}
+
+/* healthhome */
