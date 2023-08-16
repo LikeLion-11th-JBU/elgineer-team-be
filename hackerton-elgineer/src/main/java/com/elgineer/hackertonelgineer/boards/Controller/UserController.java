@@ -22,21 +22,12 @@ public class UserController {
     @Autowired
     public BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
-    }
 
     @PostMapping("/register")
     public String register(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         userService.registerUser(user, encodedPassword);
-        return "login";
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
+        return "redirect:/login";
     }
 
     @PostMapping("/login")
@@ -58,3 +49,14 @@ public class UserController {
 
 
 }
+
+// 아래 코드는 postman 요청 보낼 때 사용했던 코드라 실제 페이지에서는 사용하지 않음.
+//    @GetMapping("/info")
+//    public User getCurrentUserInfo() {
+//        User loggedInUser = (User) session.getAttribute("loggedInUser");
+//        if (loggedInUser == null) {
+//            throw new RuntimeException("로그인한 사용자가 없습니다.");
+//        }
+//        return userService.findByUsername(loggedInUser.getUsername());
+//    }
+//}

@@ -5,23 +5,26 @@
 </head>
 <body>
 
-<div th:if="${post}">
+<div th:if="${!loggedIn}">
+  <p>로그인이 필요한 서비스입니다.</p>
+  <a href="/user/login">로그인 페이지로 이동</a>
+</div>
+
+<div th:if="${loggedIn}">
   <h1>게시글 수정</h1>
 
-  <form th:action="@{/board/update/} + ${post.id}" method="post">
-    <input type="hidden" name="_method" value="put">
-
+  <form action="/board/update/${post.id}" method="post">
     <div>
       <label for="title">제목:</label>
+      <!-- 기존 게시글 제목을 value로 설정 -->
       <input type="text" id="title" name="title" th:value="${post.title}">
     </div>
     <div>
       <label for="content">내용:</label>
-      <textarea id="content" name="content" rows="10" cols="50" th:value="${post.content}"></textarea>
+      <!-- 기존 게시글 내용을 텍스트 영역 안에 설정 -->
+      <textarea id="content" name="content" th:text="${post.content}"></textarea>
     </div>
-    <div>
-      <button type="submit">게시글 수정하기</button>
-    </div>
+    <button type="submit">게시글 수정하기</button>
   </form>
 </div>
 
