@@ -81,7 +81,7 @@ public class CommunityPostController {
 
         postService.updatePost(existingPost);
 
-        return "redirect:/board/" + postId;
+        return "redirect:/board" + postId;
     }
 
     @GetMapping("/update/{postId}") // 게시글 업데이트 url변경
