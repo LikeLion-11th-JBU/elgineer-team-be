@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LifeCategoryController {
     @GetMapping("/lifecategory")
     public String lifemain() {
-
-        return "lifecategory.html"; // lifecategory.html을 템플릿으로 사용합니다.
+        return "lifecategory.html"; 
     }
     @GetMapping("/lifecategory/together") // 노인주거복지제도, 관련 신청서 지역별로 있음
     public String together(){
