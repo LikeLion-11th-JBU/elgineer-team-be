@@ -34,7 +34,7 @@ public class LifeCategoryController {
     }
 
     @GetMapping("/lifecategory/pension/info")
-    public String pensioninfo(){ return "https://basicpension.mohw.go.kr/menu.es?mid=a10201000000";}
+    public String pensioninfo(){ return "redirect:https://basicpension.mohw.go.kr/menu.es?mid=a10201000000";}
 
     @GetMapping("/lifecategory/pension/application")
     public String pensionApp() {return "redirect:https://law.go.kr/LSW/flDownload.do?flSeq=102256231&flNm=%5B%EB%B3%84%EC%A7%80+%EC%A0%9C1%ED%98%B8%EC%84%9C%EC%8B%9D%5D+%EA%B8%B0%EC%B4%88%EB%85%B8%EB%A0%B9%EC%97%B0%EA%B8%88%EC%A7%80%EA%B8%89%EC%8B%A0%EC%B2%AD%EC%84%9C%0A";}
@@ -53,7 +53,7 @@ public class LifeCategoryController {
         return "lifecategory/care.html";
     }
 
-    @GetMapping("/lifecategory/care/info")
+    @GetMapping("/lifacategory/care/info")
     public String careinfo() { return "redirect:https://www.mohw.go.kr/react/policy/index.jsp?PAR_MENU_ID=06&MENU_ID=06390104&PAGE=4&topTitle=";}
 
     @GetMapping("/lifacategory/care/application")
@@ -66,7 +66,7 @@ public class LifeCategoryController {
     @GetMapping("/lifecategory/alarm/info")
     public String alarminfo() { return "redirect:https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001093";}
 
-    @GetMapping("/lifecategory.alarm/application")
+    @GetMapping("/lifecategory/alarm/application")
     public String alarmApp() { return "redirect:https://www.osanwelfare.co.kr/bbs/action/?act=defaultfiledown&folder=site,document&file_name=%EC%9D%91%EA%B8%89%EC%95%88%EC%A0%84%EC%95%8C%EB%A6%BC%EC%84%9C%EB%B9%84%EC%8A%A4%EC%8B%A0%EC%B2%AD%EC%84%9C.hwp";}
 
 }
