@@ -3,11 +3,11 @@ package com.elgineer.hackertonelgineer.boards.Controller;
 import com.elgineer.hackertonelgineer.boards.Service.CommunityPostCommentService;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/comments")
 public class CommunityPostCommentController {
 
@@ -27,29 +27,42 @@ public class CommunityPostCommentController {
     private CommunityPostCommentService communityPostCommentService;
 
     @PostMapping("/{postId}")
-    public String createComment(@ModelAttribute CommunityPostComment comment, @PathVariable Long postId, Model model) {
-        CommunityPostComment savedComment = communityPostCommentService.createComment(comment, postId);
-        model.addAttribute("comment", savedComment);
-        return "redirect:/postDetails";
+    public ResponseEntity<?> createComment(@RequestBody CommunityPostComment comment, @PathVariable Long postId) {
+        try {
+            CommunityPostComment savedComment = communityPostCommentService.createComment(comment, postId);
+            return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("댓글 생성 중 오류가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{commentId}")
-    public String getCommentById(@PathVariable Long commentId, Model model) {
-        CommunityPostComment comment = communityPostCommentService.getCommentById(commentId);
-        model.addAttribute("comment", comment);
-        return "redirect:/postDetails";
+    public ResponseEntity<?> getCommentById(@PathVariable Long commentId) {
+        try {
+            CommunityPostComment comment = communityPostCommentService.getCommentById(commentId);
+            return new ResponseEntity<>(comment, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("댓글 조회 중 오류가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/{commentId}")
-    public String updateComment(@PathVariable Long commentId, @ModelAttribute UpdateCommentRequest content, Model model) {
-        CommunityPostComment updatedComment = communityPostCommentService.updateComment(commentId, content.getContent());
-        model.addAttribute("comment", updatedComment);
-        return "redirect:/postDetails";
+    public ResponseEntity<?> updateComment(@PathVariable Long commentId, @RequestBody UpdateCommentRequest content) {
+        try {
+            CommunityPostComment updatedComment = communityPostCommentService.updateComment(commentId, content.getContent());
+            return new ResponseEntity<>(updatedComment, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("댓글 수정 중 오류가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{commentId}")
-    public String deleteComment(@PathVariable Long commentId) {
-        communityPostCommentService.deleteComment(commentId);
-        return "redirect:/postDetails";
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
+        try {
+            communityPostCommentService.deleteComment(commentId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>("댓글 삭제 중 오류가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
