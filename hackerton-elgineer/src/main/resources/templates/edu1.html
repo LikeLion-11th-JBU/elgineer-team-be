@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elgineer</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/ui.css" />
+  </head>
+  <body>
+    <section class="edu_wrap">
+      <div class="slideshow-container">
+        <div class="mySlides fade">
+          <img src="../img/font1.png" style="width: 100%" />
+        </div>
+
+        <div class="mySlides fade">
+          <img src="../img/font2.png" style="width: 100%" />
+        </div>
+
+        <div class="mySlides fade">
+          <img src="../img/font3.png" style="width: 100%" />
+        </div>
+
+        <div class="mySlides fade">
+          <img src="../img/font4.png" style="width: 100%" />
+        </div>
+
+        <a class="prev" onclick="plusSlides(-1)">❮</a>
+        <a class="next" onclick="plusSlides(1)">❯</a>
+      </div>
+      <br />
+
+      <div style="text-align: center">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+      </div>
+    </section>
+    <script src="../js/slide.js"></script>
+  </body>
+</html>
