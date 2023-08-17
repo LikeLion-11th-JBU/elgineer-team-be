@@ -33,7 +33,6 @@ public class CommunityPostServiceImpl implements CommunityPostService{
         return postRepository.save(post);
     }
 
-
     @Override
     public List<CommunityPost> getAllPosts() {
         return postRepository.findAll();
@@ -58,26 +57,11 @@ public class CommunityPostServiceImpl implements CommunityPostService{
         postRepository.deleteById(postId);
     }
 
-    @Override
-    public CommunityPostComment addComment(Long postId, CommunityPostComment comment) {
-        Optional<CommunityPost> postOptional = postRepository.findById(postId);
-        if (postOptional.isPresent()) {
-            CommunityPost post = postOptional.get();
-            post.addComment(comment);
-            return commentRepository.save(comment);
-        }
-        return null;
-    }
 
     @Override
     public List<CommunityPostComment> getCommentsForPost(Long postId) {
         Optional<CommunityPost> postOptional = postRepository.findById(postId);
         return postOptional.map(CommunityPost::getComments).orElse(null);
-    }
-
-    @Override
-    public void deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
     }
 
     @Override

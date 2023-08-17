@@ -23,13 +23,13 @@ public interface CommunityPostService {
     void deletePost(Long postId);
 
     // 게시글에 댓글 추가
-    CommunityPostComment addComment(Long postId, CommunityPostComment comment);
+//    CommunityPostComment addComment(Long postId, CommunityPostComment comment);
 
     // 게시글에 달린 댓글들 조회
     List<CommunityPostComment> getCommentsForPost(Long postId);
 
     // 댓글 삭제
-    void deleteComment(Long commentId);
+//    void deleteComment(Long commentId);
 
     // 게시글 좋아요 추가
     CommunityPost addLike(Long postId);

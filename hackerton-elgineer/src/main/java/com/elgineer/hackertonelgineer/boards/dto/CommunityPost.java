@@ -63,6 +63,7 @@ public class CommunityPost {
         HEALTH, EDUCATION, LIFESTYLE, FREESTYLE
     }
     @Enumerated(EnumType.STRING) // 엔티티에 카테고리 필드 추가
+    @Column(nullable = false, updatable = false)
     private Category category;
 
     public CommunityPost() {

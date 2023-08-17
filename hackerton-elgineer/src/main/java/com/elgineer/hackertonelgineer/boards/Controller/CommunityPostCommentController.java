@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/board")
 public class CommunityPostCommentController {
 
     static class UpdateCommentRequest {
@@ -26,7 +26,7 @@ public class CommunityPostCommentController {
     @Autowired
     private CommunityPostCommentService communityPostCommentService;
 
-    @PostMapping("/{postId}")
+    @PostMapping("/comments/{postId}")
     public ResponseEntity<?> createComment(@RequestBody CommunityPostComment comment, @PathVariable Long postId) {
         try {
             CommunityPostComment savedComment = communityPostCommentService.createComment(comment, postId);
@@ -36,7 +36,7 @@ public class CommunityPostCommentController {
         }
     }
 
-    @GetMapping("/{commentId}")
+    @GetMapping("/comments/{commentId}")
     public ResponseEntity<?> getCommentById(@PathVariable Long commentId) {
         try {
             CommunityPostComment comment = communityPostCommentService.getCommentById(commentId);
@@ -46,7 +46,7 @@ public class CommunityPostCommentController {
         }
     }
 
-    @PutMapping("/{commentId}")
+    @PutMapping("/comments/{commentId}")
     public ResponseEntity<?> updateComment(@PathVariable Long commentId, @RequestBody UpdateCommentRequest content) {
         try {
             CommunityPostComment updatedComment = communityPostCommentService.updateComment(commentId, content.getContent());
@@ -56,13 +56,14 @@ public class CommunityPostCommentController {
         }
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
         try {
             communityPostCommentService.deleteComment(commentId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("댓글 삭제 중 오류가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
