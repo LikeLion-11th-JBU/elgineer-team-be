@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HealthCategoryController {
 
     // 복지 목록
+    @GetMapping("/health")
+    public String health(){
+        return "health.html";
+    }
     @GetMapping("/healthhome")
     public String healthHome(){
         return "healthhome";
@@ -115,5 +119,7 @@ public class HealthCategoryController {
         return "redirect:https://jasilvercare.com/%EB%85%B8%EC%9D%B8-%ED%95%84%EC%88%98-%EC%98%88%EB%B0%A9%EC%A0%91%EC%A2%85-%EC%95%88%EB%82%B4/";
     }
 
-
+    //보건소 위치
+    @GetMapping("/healthhome/hospital")
+    public String hospital() { return "hospital";}
 }
