@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>게시글 보기</title>
-
 </head>
 <body>
 
@@ -20,7 +19,7 @@
         <a th:href="@{/board/{id}(id=${post.id})}" th:text="${post.title}"></a>
     </li>
 </ul>
-w
+
 <!-- 로그인된 경우 -->
 <div id="loggedIn" style="display: none;">
     <p>환영합니다, [유저이름]님!</p>
@@ -28,7 +27,6 @@ w
     <a href="/board/create">게시글 작성하기</a>
     <a th:href="@{/board/{id}/update(id=${post != null ? post.id : ''})}">게시글 수정하기</a>
     <a th:href="@{/board/{id}/delete(id=${post != null ? post.id : ''})}" onclick="return confirm('정말 삭제하시겠습니까?');">게시글 삭제하기</a>
-
 
 </div>
 
