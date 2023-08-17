@@ -58,7 +58,7 @@ public class CommunityPostController {
 
         postService.updatePost(existingPost);
 
-        return "redirect:/board" + postId;
+        return "redirect:/board/" + postId;
     }
 
 
