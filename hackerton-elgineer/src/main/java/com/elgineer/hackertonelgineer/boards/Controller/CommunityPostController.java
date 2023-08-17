@@ -2,6 +2,7 @@ package com.elgineer.hackertonelgineer.boards.Controller;
 
 import com.elgineer.hackertonelgineer.boards.Service.CommunityPostService;
 import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPostComment;
 import com.elgineer.hackertonelgineer.boards.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,8 +36,11 @@ public class CommunityPostController {
     }
 
     @PostMapping
-    public String createPost(CommunityPost post) {
+    public String createPost(@RequestBody CommunityPost post) {
+        post.setCategory(CommunityPost.Category.valueOf(post.getCategory().toString().toUpperCase()));
+
         postService.createPost(post);
+
         return "redirect:/board";
     }
 
@@ -50,6 +54,7 @@ public class CommunityPostController {
     @GetMapping("/{postId}")
     public String getPostById(@PathVariable Long postId, Model model) {
         CommunityPost post = postService.getPostById(postId);
+        List<CommunityPostComment> comments = postService.getCommentsForPost(postId);
 
         // 세션에서 User 객체를 가져오기
         User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -64,6 +69,7 @@ public class CommunityPostController {
 
         model.addAttribute("post", post);
         model.addAttribute("loggedInUserNickname", loggedInUserNickname);
+        model.addAttribute("comments", comments);
 
         return "postDetails";
     }
@@ -71,7 +77,8 @@ public class CommunityPostController {
 
 
     @PutMapping("/update/{postId}")
-    public String updatePost(@PathVariable Long postId, @ModelAttribute CommunityPost updatedPost) {
+    public String updatePost(@PathVariable Long postId,
+                             @RequestBody CommunityPost updatedPost) {
         CommunityPost existingPost = postService.getPostById(postId);
         if (existingPost == null) {
             return "board";
@@ -94,27 +101,15 @@ public class CommunityPostController {
         return "postUpdate";
     }
 
-    @DeleteMapping("/{postId}")
-    public String deletePost(@PathVariable Long postId) {
+    @DeleteMapping("/{postId}/delete")
+    public String deletePost(@PathVariable Long postId, Model model) {
         try {
             postService.deletePost(postId);
         } catch (Exception e) {
             logger.error("Error deleting post with ID: " + postId, e);
-            return "error"; // 혹은 다른 에러 페이지를 반환
+            model.addAttribute("errorMessage", "Error deleting post with ID: " + postId);
         }
         return "redirect:/board";
-    }
-
-    @PostMapping("/{postId}/like")
-    public String addLike(@PathVariable Long postId) {
-        postService.addLike(postId);
-        return "redirect:/postDetails";
-    }
-
-    @DeleteMapping("/{postId}/like")
-    public String removeLike(@PathVariable Long postId) {
-        postService.removeLike(postId);
-        return "redirect:/postDetails";
     }
 
     @GetMapping("/isAuthenticated")
@@ -122,5 +117,6 @@ public class CommunityPostController {
     public boolean isAuthenticated() {
         return session.getAttribute("loggedInUser") != null;
     }
+
 
 }

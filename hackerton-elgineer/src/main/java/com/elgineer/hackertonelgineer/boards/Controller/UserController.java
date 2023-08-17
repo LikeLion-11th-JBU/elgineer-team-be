@@ -1,5 +1,6 @@
 package com.elgineer.hackertonelgineer.boards.Controller;
 
+import com.elgineer.hackertonelgineer.boards.dto.CommunityPost;
 import com.elgineer.hackertonelgineer.boards.dto.User;
 import com.elgineer.hackertonelgineer.boards.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(User user) {
+    public String register(@RequestBody User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         userService.registerUser(user, encodedPassword);
         return "login";
@@ -40,8 +41,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(User user) {
+    public String login(@RequestBody User user) {
+        System.out.println("Received password: " + user.getPassword());
         User loggedInUser = userService.loginUser(user.getUsername(), user.getPassword());
+
         if (loggedInUser != null) {
             session.setAttribute("loggedInUser", loggedInUser);
             // 로그인 성공 시 세션에 "loggedInUser" 속성 설정
