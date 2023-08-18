@@ -1,30 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <title>게시글 작성</title>
+  <link rel="stylesheet" href="../css/create.css"/> 
 </head>
+
 <body>
+  <div th:if="${loggedIn}" class="wrap">
+    <h1 style="text-align: center; color: #fff;" >게시글 작성</h1>
+    <div class="board_main" style="text-align: center;">
+    <form action="/board" method="post" id="createForm">
+      <div style="margin-bottom: 10px;">
+        <label for="title" class="b_title">제목:</label>
+        <input type="text" id="title" name="title" placeholder="제목을 입력해주세요.">
+        <div style="margin-bottom: 10px;">
+          <label for="category">카테고리:</label>
+          <select name="category" id="category">
+            <option value="HEALTH">HEALTH</option>
+            <option value="LIFESTYLE">LIFESTYLE</option>
+            <option value="EDUCATION">EDUCATION</option>
+            <option value="FREESTYLE">FREESTYLE</option>
+          </select>
+      </div>
+      <div>
+        <label for="content" class="b_content">내용:</label>
+        <textarea id="content" name="content" placeholder="글을 작성해주세요."></textarea>
+      </div>
+      <button type="submit" class="submit">작성하기</button>
+    </form>
 
-<div th:if="${!loggedIn}">
-  <p>로그인이 필요한 서비스입니다.</p>
-  <a href="/user/login">로그인 페이지로 이동</a>
-</div>
+<!--   여기 폼 빨간줄 수정좀 해주세요   -->
 
-<div th:if="${loggedIn}">
-  <h1>게시글 작성</h1>
+  </div>
+  </div>
 
-  <form action="/board" method="post">
-    <div>
-      <label for="title">제목:</label>
-      <input type="text" id="title" name="title">
-    </div>
-    <div>
-      <label for="content">내용:</label>
-      <textarea id="content" name="content"></textarea>
-    </div>
-    <button type="submit">게시글 작성하기</button>
-  </form>
-</div>
+
+  <script>
+    document.getElementById("createForm").addEventListener('submit', function(e) {
+      e.preventDefault(); // 폼의 기본 제출 동작 중지
+
+      const formData = {
+        title: document.querySelector('input[name="title"]').value,
+        content: document.querySelector('textarea[name="content"]').value,
+        category: document.querySelector('select[name="category"]').value
+      };
+
+      fetch("/board", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => {
+          if (response.ok) {
+            // 게시글 작성에 성공하면 게시글 목록 페이지로 리다이렉트 (또는 필요한 페이지로 변경하세요)
+            window.location.href = "/board";
+          } else {
+            alert("게시글 작성에 실패하였습니다.");
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("서버 오류가 발생했습니다.");
+        });
+    });
+  </script>
+
 
 </body>
+
 </html>

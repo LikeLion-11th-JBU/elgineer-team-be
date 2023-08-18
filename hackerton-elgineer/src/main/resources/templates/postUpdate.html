@@ -1,29 +1,116 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <title>게시글 수정</title>
 </head>
+<style>
+  html, body {
+    background-color: lightskyblue;
+  }
+  *{
+    box-sizing: border-box;
+  }
+  .wrap {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 25px;
+    font-weight: 500;
+  }
+  .board_main {
+    margin: 0 auto;
+    margin-top: 40px;
+  }
+  #title {
+    width: 1000px;
+    height: 60px;
+    font-size: 24px;
+    border: 1px solid lightblue;
+    border-radius: 6px;
+  }
+  #content {
+    width: 1000px;
+    height: 500px;
+    font-size: 20px;
+    border: 1px solid lightblue;
+    border-radius: 6px;
+  }
+  .submit {
+    height: 60px;
+    width: 200px;
+    font-size: 24px;
+    background-color: #fff;
+    color: black;
+    margin-top: 10px;
+    border: 1px solid lightblue;
+    border-radius: 6px;
+  }
+  .submit:hover {
+    cursor: pointer;
+  }
+  .b_title {
+    position: absolute;
+    left: 390px;
+    color: #fff;
+  }
+  .b_content {
+    position: absolute;
+    left: 390px;
+    color: #fff;
+  }
+
+</style>
 <body>
+<div th:if="${post}" class="wrap">
+  <h1 style="text-align: center; color: #fff;" >게시글 수정</h1>
+  <div class="board_main" style="text-align: center;">
+    <form th:action="@{/board/update/{postId}(postId=${post.id})}" method="put" id="editForm">
+      <div style="margin-bottom: 10px;">
 
-<div th:if="${post}">
-  <h1>게시글 수정</h1>
-
-  <form th:action="@{/board/update/} + ${post.id}" method="post">
-    <input type="hidden" name="_method" value="put">
-
-    <div>
-      <label for="title">제목:</label>
-      <input type="text" id="title" name="title" th:value="${post.title}">
-    </div>
-    <div>
-      <label for="content">내용:</label>
-      <textarea id="content" name="content" rows="10" cols="50" th:value="${post.content}"></textarea>
-    </div>
-    <div>
-      <button type="submit">게시글 수정하기</button>
-    </div>
-  </form>
+        <label for="title" class="b_title">제목:</label>
+        <input type="text" th:value="${post.title}" id="title" name="title">
+      </div>
+      <div >
+        <label for="content" class="b_content">내용:</label>
+        <textarea id="content" name="content" th:value="${post.content}"></textarea>
+      </div>
+      <button type="submit" class="submit">게시글 수정하기</button>
+    </form>
+  </div>
 </div>
 
+
+<script>
+    document.querySelector('#editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let formData = {
+            title: document.getElementById('title').value,
+            content: document.getElementById('content').value
+        };
+
+        let postId = e.target.action.split('/').pop();
+
+        fetch(`/board/update/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/board/" + postId;
+            } else {
+                window.location.href = "/board/" + postId;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+  </script>
+
 </body>
+
 </html>
