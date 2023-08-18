@@ -62,12 +62,11 @@
 
 </style>
 <body>
-  <div th:if="${post}" class="wrap">
-    <h1 style="text-align: center; color: #fff;" >게시글 수정</h1>
-    <div class="board_main" style="text-align: center;">
-    <form th:action="@{/board/update/} + ${post.id}" method="post">
+<div th:if="${post}" class="wrap">
+  <h1 style="text-align: center; color: #fff;" >게시글 수정</h1>
+  <div class="board_main" style="text-align: center;">
+    <form th:action="@{/board/update/{postId}(postId=${post.id})}" method="put" id="editForm">
       <div style="margin-bottom: 10px;">
-        <input type="hidden" name="_method" value="put">
 
         <label for="title" class="b_title">제목:</label>
         <input type="text" th:value="${post.title}" id="title" name="title">
@@ -79,7 +78,38 @@
       <button type="submit" class="submit">게시글 수정하기</button>
     </form>
   </div>
-  </div>
+</div>
+
+
+<script>
+    document.querySelector('#editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let formData = {
+            title: document.getElementById('title').value,
+            content: document.getElementById('content').value
+        };
+
+        let postId = e.target.action.split('/').pop();
+
+        fetch(`/board/update/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/board/" + postId;
+            } else {
+                window.location.href = "/board/" + postId;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+  </script>
 
 </body>
 
