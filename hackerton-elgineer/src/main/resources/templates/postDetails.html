@@ -13,7 +13,7 @@
     position:fixed;
     top: 20px;    
     left: 15px;
-    width: 130px; 
+    width: 120px;
     height: 60px; 
     font-size: 20px; 
     font-weight:bold; 
@@ -48,17 +48,17 @@
     <p th:text="${comment.content}"></p>
 
     <!-- 로그인한 사용자와 댓글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
-    <div th:if="${loggedInUserNickname == comment.writer}">
+    <div class="bottom_comment" th:if="${loggedInUserNickname == comment.writer}">
 
         <!-- 댓글 수정 -->
-        <button style="margin-left: 10px;" onclick="showEditBox(this)">수정</button>
+        <button class="btn_mode" style="margin-left: 10px;" onclick="showEditBox(this)">수정</button>
         <div class="edit-box" style="display: none;">
             <textarea th:text="${comment.content}"></textarea>
-            <button th:onclick="'showEditBox(this); updateComment(this, ' + ${comment.id} + ')'">저장</button>
+            <button th:onclick="'showEditBox(this); updateComment(this, ' + ${comment.id} + ')'" class="btn_mode">저장</button>
         </div>
 
         <!-- 댓글 삭제 -->
-        <button th:onclick="'deleteComment(' + ${comment.id} + ')'">삭제</button>
+        <button th:onclick="'deleteComment(' + ${comment.id} + ')'" class="btn_mode">삭제</button>
 
     </div>
 </div>

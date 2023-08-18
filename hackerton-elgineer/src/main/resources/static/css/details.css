@@ -134,10 +134,9 @@ body {
     margin-left: 10px;
 }
 
-.coment {
+.comment {
     display: flex;
     justify-content: center;
-    flex-direction: row;
     font-size: 25px;
     align-items: center;
 }
@@ -155,4 +154,27 @@ body {
     width: 50px;
     height: 30px;
     font-weight: bold;
+}
+
+.btn_mode {
+    padding: 4px 30px;
+    border: none;
+    border-radius: 6px;
+    background-color: lightcoral;
+    color: #fff;
+
+}
+
+.btn_mode:hover {
+    background-color: coral;
+    color: black;
+}
+
+.edit-box {
+    display: flex;
+    justify-content: center;
+}
+
+.edit-box textarea {
+    float: left;
 }
