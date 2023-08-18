@@ -3,7 +3,7 @@
 
 <head>
     <title>게시글 상세</title>
-    <link rel="stylesheet" href="../css/details.css"/> 
+    <link rel="stylesheet" href="../css/details.css"/>
 </head>
 
 <body data-post-id="${post.id}">
@@ -19,25 +19,19 @@
     font-weight:bold; 
     border: 1px solid blue;
     border-radius: 30px;"
-    onclick="location.href='/board'">이전</button>
+            onclick="location.href='/board'">이전</button>
     <div class="title" th:text="${post.title}">안녕하세요</div>
     <div class="content" th:text="${post.content}">
     </div>
 </div>
-<!-- 좋아요 버튼 -->
-<div class="box">
-    <button id="likeButton" onclick="addLike()">👍 좋아요</button>
 
-    <!-- 좋아요 취소 버튼 -->
-    <button id="unlikeButton" onclick="removeLike()">👍 좋아요 취소</button>
-
-    <!-- 로그인한 사용자와 게시글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
-    <div class="post" th:if="${loggedInUserNickname == post.writer}">
-        <!-- 게시글 수정 -->
-        <a th:href="@{'/board/update/' + ${post.id}}"><button id="update">게시글 수정</button></a>
-        <!-- 게시글 삭제 -->
-        <button id="delete" onclick="deletePost(`${post.id}`)">게시글 삭제</button>
-    </div>
+<!-- 로그인한 사용자와 게시글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
+<div class="post" th:if="${loggedInUserNickname == post.writer}">
+    <!-- 게시글 수정 -->
+    <a th:href="@{'/board/update/' + ${post.id}}"><button id="update">게시글 수정</button></a>
+    <!-- 게시글 삭제 -->
+    <button id="delete" onclick="deletePost(`${post.id}`)">게시글 삭제</button>
+</div>
 </div>
 
 
@@ -46,12 +40,12 @@
 <div class="wrap2">
     <form id="commentForm">
         <textarea name="content" id="commentContent" placeholder="댓글을 입력하세요."></textarea>
-        <button type="button" onclick="createComment()">댓글 작성</button>
+        <button type="submit" onclick="addComment()">댓글 작성</button>
     </form>
 </div>
 
 <!-- 댓글 목록 -->
-<div class="coment" th:each="comment : ${comments}">
+<div class="comment" th:each="comment : ${comments}">
     <p th:text="${comment.content}"></p>
 
     <!-- 로그인한 사용자와 댓글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
@@ -61,51 +55,76 @@
         <button style="margin-left: 10px;" onclick="showEditBox(this)">수정</button>
         <div class="edit-box" style="display: none;">
             <textarea th:text="${comment.content}"></textarea>
-            <button onclick="updateComment(this, `${comment.id}`)">저장</button>
+            <button th:onclick="'showEditBox(this); updateComment(this, ' + ${comment.id} + ')'">저장</button>
         </div>
 
         <!-- 댓글 삭제 -->
-        <button onclick="deleteComment(`${comment.id}`)">삭제</button>
+        <button th:onclick="'deleteComment(' + ${comment.id} + ')'">삭제</button>
 
     </div>
 </div>
 
 <script>
-    const postId = document.body.getAttribute('data-post-id');
+    const postId = [[${post.id}]]
+
+    function handleResponse(response) {
+        if (!response.ok) {
+            if (response.status === 204) { // 204 No Content 응답을 고려
+                return;
+            }
+            return response.text().then(text => {
+                throw new Error(text);
+            });
+        }
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+            return response.json();
+        }
+    }
+
 
     function deletePost(postId) {
         const confirmDelete = confirm("게시글을 삭제하시겠습니까?");
         if (confirmDelete) {
-            fetch(`/board/${postId}`, {  // URL 수정
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            fetch(`/board/${postId}/delete`, {
+                method: 'DELETE'
             })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = "/board";
-                    } else {
-                        alert("게시글 삭제에 실패하였습니다.");
-                    }
-                });
+            .then(handleResponse)
+            .then(() => {
+                window.location.href = "/board";
+            })
+            .catch(error => {
+                alert(error.message);
+            });
         }
     }
 
-    function createComment() {
-        const content = document.getElementById('commentContent').value;
-        fetch(`/comments/${postId}`, {  // URL 수정
+    document.getElementById("commentForm").addEventListener('submit', function(e) {
+        e.preventDefault(); // 폼의 기본 제출 동작 중지
+
+        const content = document.querySelector('textarea[name="content"]').value;
+
+        fetch(`/board/comments/${postId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ content: content })
         })
-            .then(response => response.json())
-            .then(data => {
-                location.reload();
-            });
-    }
+        .then(response => {
+            if (response.ok) {
+                location.reload(); // 성공하면 페이지 리로드
+            } else {
+                return response.text().then(text => {
+                    throw new Error(text);
+                });
+            }
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+    });
+
 
     function showEditBox(button) {
         const editBox = button.nextElementSibling;
@@ -114,66 +133,36 @@
 
     function updateComment(button, commentId) {
         const editedContent = button.previousElementSibling.value;
-        fetch(`/comments/${commentId}`, {  // URL 수정
+        fetch(`/board/comments/${commentId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ content: editedContent })
         })
-            .then(response => response.json())
-            .then(data => {
-                location.reload();
-            });
+        .then(handleResponse)
+        .then(() => {
+            location.reload();
+        })
+        .catch(error => {
+            alert(error.message);
+        });
     }
 
     function deleteComment(commentId) {
         const confirmDelete = confirm("댓글을 삭제하시겠습니까?");
         if (confirmDelete) {
-            fetch(`/comments/${commentId}`, {  // URL 수정
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            fetch(`/board/comments/${commentId}`, {
+                method: 'DELETE'
             })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert("댓글 삭제에 실패하였습니다.");
-                    }
-                });
-        }
-    }
-
-    function addLike() {
-        fetch(`/board/${postId}/like`, {  // URL 수정
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                // 여기에 좋아요 수를 업데이트하는 로직 등이 필요하다면 추가
-            });
-    }
-
-    function removeLike() {
-        fetch(`/board/${postId}/like`, {  // URL 수정
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                // 여기에 좋아요 수 감소를 반영하는 로직 등이 필요하다면 추가
+            .then(handleResponse)
+            .then(() => {
+                location.reload();
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert("좋아요 취소에 실패하였습니다.");
+                alert(error.message);
             });
+        }
     }
 
 </script>
