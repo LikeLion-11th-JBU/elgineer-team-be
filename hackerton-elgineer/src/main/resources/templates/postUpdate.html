@@ -114,36 +114,6 @@
   </script>
 
 
-  <script>
-    document.querySelector('#editForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        let formData = {
-            title: document.getElementById('title').value,
-            content: document.getElementById('content').value
-        };
-
-        let postId = e.target.action.split('/').pop();
-
-        fetch(`/board/update/${postId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (response.ok) {
-                window.location.href = "/board/" + postId;
-            } else {
-                window.location.href = "/board/" + postId;
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-
-  </script>
-
 </body>
 
 </html>
