@@ -87,7 +87,7 @@
 <div class="wrap">
     <h2>회원가입</h2>
 
-    <form action="/user/register" method="post" class="login_box" >
+    <form action="/user/register" method="post" class="login_box" id="registerForm" >
         <li class="pannel" style="display: block;">
             <div class="pannel_inner">
                 <div class="id_row">
@@ -104,6 +104,42 @@
         </li>
     </form>
 </div>
+
+<script>
+    document.getElementById("registerForm").addEventListener('submit', function(e) {
+        e.preventDefault();  // 폼의 기본 제출 동작 중지
+
+        const formData = {
+            username: document.querySelector('input[name="username"]').value,
+            password: document.querySelector('input[name="password"]').value,
+            nickname: document.querySelector('input[name="nickname"]').value
+        };
+
+        fetch("/user/register", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.ok) {
+                // 회원가입에 성공하면 알림 메시지 표시 또는 다른 페이지로 리다이렉트
+                alert("회원가입에 성공하였습니다!");
+                window.location.href = "/user/login";  // 로그인 페이지로 리다이렉트. 실제 주소에 따라 변경해야 합니다.
+            } else {
+                // 회원가입에 실패하면 오류 메시지 표시
+                alert("회원가입에 실패하였습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("서버 오류가 발생했습니다.");
+        });
+    });
+</script>
+
+
 </body>
 
 </html>
