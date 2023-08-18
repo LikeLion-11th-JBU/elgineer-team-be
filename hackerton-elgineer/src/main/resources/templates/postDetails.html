@@ -25,14 +25,15 @@
     </div>
 </div>
 
-<!-- 로그인한 사용자와 게시글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
-<div class="post" th:if="${loggedInUserNickname == post.writer}">
+  <!-- 로그인한 사용자와 게시글 작성자가 동일한 경우에만 수정 및 삭제 버튼 표시 -->
+  <div class="post" th:if="${loggedInUserNickname == post.writer}">
     <!-- 게시글 수정 -->
     <a th:href="@{'/board/update/' + ${post.id}}"><button id="update">게시글 수정</button></a>
     <!-- 게시글 삭제 -->
-    <button id="delete" onclick="deletePost(`${post.id}`)">게시글 삭제</button>
+    <button id="delete" th:onclick="'deletePost(' + ${post.id} + ') '">게시글 삭제</button>
 </div>
 </div>
+
 
 
 <!-- 댓글 작성 폼 -->
@@ -63,42 +64,28 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
 
-    const postId = [[${post.id}]]
-
-    function handleResponse(response) {
-        if (!response.ok) {
-            if (response.status === 204) { // 204 No Content 응답을 고려
-                return;
-            }
-            return response.text().then(text => {
-                throw new Error(text);
-            });
-        }
-        const contentType = response.headers.get("Content-Type");
-        if (contentType && contentType.includes("application/json")) {
-            return response.json();
-        }
-    }
-
-
+    const postId = /*[[${post.id}]]*/ 'post.id';
     function deletePost(postId) {
         const confirmDelete = confirm("게시글을 삭제하시겠습니까?");
         if (confirmDelete) {
             fetch(`/board/${postId}/delete`, {
-                method: 'DELETE'
-
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            .then(handleResponse)
-            .then(() => {
-                window.location.href = "/board";
-            })
-            .catch(error => {
-                alert(error.message);
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/board";
+                } else {
+                    window.location.href = "/board";
+                }
             });
         }
     }
+
 
     document.getElementById("commentForm").addEventListener('submit', function(e) {
         e.preventDefault(); // 폼의 기본 제출 동작 중지
@@ -125,11 +112,18 @@
             alert(error.message);
         });
     });
-
+    function handleResponse(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response;
+    }
 
     function showEditBox(button) {
         const editBox = button.nextElementSibling;
-        editBox.style.display = 'block';
+        if (editBox) {
+            editBox.style.display = 'block';
+        }
     }
 
     function updateComment(button, commentId) {
