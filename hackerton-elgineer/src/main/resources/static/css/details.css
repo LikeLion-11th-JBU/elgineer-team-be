@@ -67,6 +67,12 @@ body {
     margin-bottom: 6px;
 }
 
+.post {
+    display: flex;
+    justify-content: center;
+}
+
+
 #delete {
     width: 150px;
     height: 50px;
