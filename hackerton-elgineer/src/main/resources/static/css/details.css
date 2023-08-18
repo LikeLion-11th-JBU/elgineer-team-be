@@ -72,6 +72,9 @@ body {
     justify-content: center;
 }
 
+.post a {
+    margin: 0 4px 0 4px;
+}
 
 #delete {
     width: 150px;
@@ -103,6 +106,12 @@ body {
     flex-direction: column;
     font-size: 25px;
     align-items: center;
+}
+
+.wrap2 button:hover {
+    cursor: pointer;
+    background-color: blue;
+    color: #fff;
 }
 
 #commentContent {
