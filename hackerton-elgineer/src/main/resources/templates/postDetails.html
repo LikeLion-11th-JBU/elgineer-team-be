@@ -41,7 +41,6 @@
 </div>
 
 
-
 <!-- 댓글 작성 폼 -->
 <div class="wrap2">
     <form id="commentForm">
@@ -71,12 +70,12 @@
 </div>
 
 <script>
-    const postId = document.body.getAttribute('data-post-id');
-
-    function deletePost(postId) {
+    const postId = ${post.id};
+   function deletePost(postId) {
+        alert("tlqkf")
         const confirmDelete = confirm("게시글을 삭제하시겠습니까?");
         if (confirmDelete) {
-            fetch(`/board/${postId}`, {  // URL 수정
+            fetch(`/board/delete/${postId}`, {  // URL 수정
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -175,7 +174,6 @@
                 alert("좋아요 취소에 실패하였습니다.");
             });
     }
-
 </script>
 
 </body>
